@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proteccioncivilservidor;
+package Modelo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -37,7 +39,7 @@ import javax.mail.internet.MimeMultipart;
  *
  * @author Cristian
  */
-public class Comms {
+public class Comms extends Thread{
     
         
     private static final String ACTIVAR_PLAN = "ACTIVARPLAN";
@@ -45,12 +47,17 @@ public class Comms {
     private static final String HISTORIAL_ALERTAS = "HISTORIALALERTAS";
 
     private static final int puerto = 5500;
+    private boolean conexiones = true;
+    
+    private ServerSocket ss;    
+    private ObjectOutputStream salida;
+    private ObjectInputStream entrada;
     
     public Comms(){
         try {
-            ServerSocket ss = new ServerSocket(puerto);
-            
-            while(true){
+            ss = new ServerSocket(puerto);
+            run();/*
+            while(conexiones){
                 Socket socket = ss.accept();
                 BufferedReader entrada = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
@@ -116,12 +123,67 @@ public class Comms {
                         break;
                 }
                 socket.close();
-            }
+            }*/
         } catch (IOException ex) {
             Logger.getLogger(Comms.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    /*
+    ** Sobreescribe el metodo  run
+    */
+    public void run(){
+         while(conexiones){
+            Socket s;
+            Mensaje mensajeTX;
+            Mensaje mensajeRX;
+            try {
+                s = ss.accept();
+                salida = new ObjectOutputStream(s.getOutputStream());
+                entrada = new ObjectInputStream(s.getInputStream());
+                
+                mensajeRX =(Mensaje) entrada.readObject();
+                mensajeTX = new Mensaje();
+                switch(mensajeRX.verOperacion()){
+                    case ALERTAS_MAPA: 
+                        mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
+                        mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
+                        break;
+                    case ACTIVAR_PLAN:
+                        mensajeTX.ponerParametros("true");
+                        break;
+                    case HISTORIAL_ALERTAS:
+                        mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
+                        mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
+                        break;
+                    case LOGIN:
+                        break;
+                    case REGISTRO:
+                        break;
+                }
+                salida.writeObject(mensajeTX);
+                
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (ClassNotFoundException ex) {
+                 Logger.getLogger(Comms.class.getName()).log(Level.SEVERE, null, ex);
+             }
+        }
+    }
+    /*
+    ** Acepta conexiones
+    */
+    public void start(){
+        conexiones = true;
+    }
+    
+     /*
+    ** Acepta conexiones
+    */
+    public void parar(){
+        conexiones = false;
+    }
+ 
     /**
      * Envia un correo a una cuenta de Gmail
      */
@@ -157,12 +219,7 @@ public class Comms {
             t.connect(usuarioCorreo, contrasena);
             t.sendMessage(m, m.getAllRecipients());
             t.close();
-            
-            
-            
-            
-            
-            
+  
         }catch(Exception e){
             e.printStackTrace();
         }
