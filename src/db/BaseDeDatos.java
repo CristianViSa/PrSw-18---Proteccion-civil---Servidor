@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
-import modelo.Albergue;
-import modelo.Almacen;
-import modelo.Coordenada;
-import modelo.Vehiculo;
-import modelo.Voluntario;
+import Modelo.Albergue;
+import Modelo.Almacen;
+import Modelo.Coordenada;
+import Modelo.Vehiculo;
+import Modelo.Voluntario;
 
 /**
  * 
