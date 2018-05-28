@@ -5,35 +5,26 @@
  */
 package Modelo;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
+import db.BaseDeDatos;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.naming.NamingException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,7 +32,6 @@ import javax.mail.internet.MimeMultipart;
  */
 public class Comms extends Thread{
     
-        
     private static final String ACTIVAR_PLAN = "ACTIVARPLAN";
     private static final String ALERTAS_MAPA = "ALERTASMAPA";
     private static final String HISTORIAL_ALERTAS = "HISTORIALALERTAS";
@@ -53,9 +43,19 @@ public class Comms extends Thread{
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
     
-    public Comms(){
+    BaseDeDatos db;
+    
+    public Comms() throws Exception{
         try {
             ss = new ServerSocket(puerto);
+            try {
+                this.db = new BaseDeDatos();
+             
+            } 
+            
+            catch (NamingException ex) {
+                throw new Exception("Error al conectar con servidor.");
+            }
             run();/*
             while(conexiones){
                 Socket socket = ss.accept();
