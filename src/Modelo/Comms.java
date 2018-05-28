@@ -131,6 +131,7 @@ public class Comms extends Thread{
     
     /*
     ** Sobreescribe el metodo  run
+    ** @author Cristian
     */
     public void run(){
          while(conexiones){
@@ -145,13 +146,16 @@ public class Comms extends Thread{
                 mensajeRX =(Mensaje) entrada.readObject();
                 mensajeTX = new Mensaje();
                 switch(mensajeRX.verOperacion()){
+                    //@author Cristian
                     case ALERTAS_MAPA: 
                         mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
                         mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
                         break;
+                    //@author Cristian
                     case ACTIVAR_PLAN:
                         mensajeTX.ponerParametros("true");
                         break;
+                    //@author Cristian
                     case HISTORIAL_ALERTAS:
                         mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
                         mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
@@ -172,13 +176,15 @@ public class Comms extends Thread{
     }
     /*
     ** Acepta conexiones
+    **@author Cristian
     */
     public void start(){
         conexiones = true;
     }
     
-     /*
-    ** Acepta conexiones
+    /*
+    ** Deja de aceptap conexiones
+    **@author Cristian
     */
     public void parar(){
         conexiones = false;
@@ -186,6 +192,7 @@ public class Comms extends Thread{
  
     /**
      * Envia un correo a una cuenta de Gmail
+     * @author Cristian
      */
     public void enviarCorreoGmail(String destino){
         String usuarioCorreo = "admsis2cn@gmail.com";
