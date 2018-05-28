@@ -56,74 +56,7 @@ public class Comms extends Thread{
     public Comms(){
         try {
             ss = new ServerSocket(puerto);
-            run();/*
-            while(conexiones){
-                Socket socket = ss.accept();
-                BufferedReader entrada = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-                PrintWriter salida = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream())), true);
-                String texto = entrada.readLine();
-                switch (texto){
-                    case ALERTAS_MAPA:
-                        salida.println(2);
-                        
-                        salida.println(1);
-                        salida.println("terremoto");
-                        salida.println(1);
-                        salida.println(41);
-                        salida.println(-1);
-                        salida.println(1000);
-                        salida.println(true);
-                        salida.println(10);
-                        salida.println(1);
-                        salida.println(2018);
-                        
-                        salida.println(2);
-                        salida.println("alud");
-                        salida.println(1);
-                        salida.println(40);
-                        salida.println(-1);
-                        salida.println(100);
-                        salida.println(true);
-                        salida.println(20);
-                        salida.println(5);
-                        salida.println(2018);
-                        
-                        break;
-                    case HISTORIAL_ALERTAS:
-                        salida.println(2); // Numero de alertas para que el cliente sepa cuantas tiene que crear
-                        
-                        salida.println(1);
-                        salida.println("terremoto");
-                        salida.println(1);
-                        salida.println(41);
-                        salida.println(-1);
-                        salida.println(1000);
-                        salida.println(true);
-                        salida.println(10);
-                        salida.println(1);
-                        salida.println(2018);
-                        
-                        salida.println(2);
-                        salida.println("alud");
-                        salida.println(1);
-                        salida.println(40);
-                        salida.println(-1);
-                        salida.println(100);
-                        salida.println(true);
-                        salida.println(20);
-                        salida.println(5);
-                        salida.println(2018);
-                        
-                        break; 
-                    case ACTIVAR_PLAN:
-                        enviarCorreoGmail("admsis2cn@gmail.com");///////////// TEMPORAL
-                        salida.println(true);
-                        break;
-                }
-                socket.close();
-            }*/
+            run();
         } catch (IOException ex) {
             Logger.getLogger(Comms.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,6 +64,7 @@ public class Comms extends Thread{
     
     /*
     ** Sobreescribe el metodo  run
+    ** @author Cristian
     */
     public void run(){
          while(conexiones){
@@ -145,13 +79,16 @@ public class Comms extends Thread{
                 mensajeRX =(Mensaje) entrada.readObject();
                 mensajeTX = new Mensaje();
                 switch(mensajeRX.verOperacion()){
+                    //@author Cristian
                     case ALERTAS_MAPA: 
                         mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
                         mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
                         break;
+                    //@author Cristian
                     case ACTIVAR_PLAN:
                         mensajeTX.ponerParametros("true");
                         break;
+                    //@author Cristian
                     case HISTORIAL_ALERTAS:
                         mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
                         mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
@@ -172,13 +109,15 @@ public class Comms extends Thread{
     }
     /*
     ** Acepta conexiones
+    **@author Cristian
     */
     public void start(){
         conexiones = true;
     }
     
-     /*
-    ** Acepta conexiones
+    /*
+    ** Deja de aceptap conexiones
+    **@author Cristian
     */
     public void parar(){
         conexiones = false;
@@ -186,6 +125,7 @@ public class Comms extends Thread{
  
     /**
      * Envia un correo a una cuenta de Gmail
+     * @author Cristian
      */
     public void enviarCorreoGmail(String destino){
         String usuarioCorreo = "admsis2cn@gmail.com";
