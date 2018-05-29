@@ -2,7 +2,7 @@ package Modelo;
 
 /**
  *
- * @author cence
+ * @author Alejandro Cencerrado
  */
 public class Voluntario {
     private String id;
@@ -89,5 +89,15 @@ public class Voluntario {
     
     public void desocupar(){
         setDisponible(true);
-    }   
+    }  
+    
+    @Override
+    /**
+     * Sobreescribo el método para utilzarlo en la clase comms.
+     */
+    public String toString() {
+        return id + "," + nombre + "," + telefono + "," + correo + "," +
+                coordenadas.getX() + "," + coordenadas.getY() + "," + 
+                esConductor + "," + disponible;
+    }
 }

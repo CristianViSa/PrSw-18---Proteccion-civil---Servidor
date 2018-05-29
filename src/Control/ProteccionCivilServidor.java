@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Control;
 
 import Modelo.Comms;
@@ -11,7 +6,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Cristian
+ * @author Cristian, Alejandro
  */
 public class ProteccionCivilServidor {
 

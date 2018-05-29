@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Modelo;
 
 
@@ -12,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,17 +20,12 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.naming.NamingException;
-import javax.swing.JOptionPane;
 
 /**
  *
- * @author Cristian
+ * @author Cristian, Alejandro
  */
 public class Comms extends Thread{
-    
-    private static final String ACTIVAR_PLAN = "ACTIVARPLAN";
-    private static final String ALERTAS_MAPA = "ALERTASMAPA";
-    private static final String HISTORIAL_ALERTAS = "HISTORIALALERTAS";
 
     private static final int puerto = 5500;
     private boolean conexiones = true;
@@ -56,74 +47,8 @@ public class Comms extends Thread{
             catch (NamingException ex) {
                 throw new Exception("Error al conectar con servidor.");
             }
-            run();/*
-            while(conexiones){
-                Socket socket = ss.accept();
-                BufferedReader entrada = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-                PrintWriter salida = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream())), true);
-                String texto = entrada.readLine();
-                switch (texto){
-                    case ALERTAS_MAPA:
-                        salida.println(2);
-                        
-                        salida.println(1);
-                        salida.println("terremoto");
-                        salida.println(1);
-                        salida.println(41);
-                        salida.println(-1);
-                        salida.println(1000);
-                        salida.println(true);
-                        salida.println(10);
-                        salida.println(1);
-                        salida.println(2018);
-                        
-                        salida.println(2);
-                        salida.println("alud");
-                        salida.println(1);
-                        salida.println(40);
-                        salida.println(-1);
-                        salida.println(100);
-                        salida.println(true);
-                        salida.println(20);
-                        salida.println(5);
-                        salida.println(2018);
-                        
-                        break;
-                    case HISTORIAL_ALERTAS:
-                        salida.println(2); // Numero de alertas para que el cliente sepa cuantas tiene que crear
-                        
-                        salida.println(1);
-                        salida.println("terremoto");
-                        salida.println(1);
-                        salida.println(41);
-                        salida.println(-1);
-                        salida.println(1000);
-                        salida.println(true);
-                        salida.println(10);
-                        salida.println(1);
-                        salida.println(2018);
-                        
-                        salida.println(2);
-                        salida.println("alud");
-                        salida.println(1);
-                        salida.println(40);
-                        salida.println(-1);
-                        salida.println(100);
-                        salida.println(true);
-                        salida.println(20);
-                        salida.println(5);
-                        salida.println(2018);
-                        
-                        break; 
-                    case ACTIVAR_PLAN:
-                        enviarCorreoGmail("admsis2cn@gmail.com");///////////// TEMPORAL
-                        salida.println(true);
-                        break;
-                }
-                socket.close();
-            }*/
+            run();
+    
         } catch (IOException ex) {
             Logger.getLogger(Comms.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,7 +56,7 @@ public class Comms extends Thread{
     
     /*
     ** Sobreescribe el metodo  run
-    ** @author Cristian
+    ** @author Cristian, Alejandro
     */
     public void run(){
          while(conexiones){
@@ -160,9 +85,49 @@ public class Comms extends Thread{
                         mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
                         mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
                         break;
+                        
+                    // @author Alejandro
+                    case OBTENER_LISTA_VOLUNTARIOS:
+                        ArrayList<Voluntario> listaVoluntarios = db.getVoluntarios();
+                        mensajeTX.ponerParametros(String.valueOf(listaVoluntarios.size()));
+                        for(int i=0; i< listaVoluntarios.size(); i++) {
+                            mensajeTX.anadirParametro(listaVoluntarios.get(i).toString());
+                        } 
+                        break;  
+                        
+                    // @author Alejandro
+                    case OBTENER_LISTA_VEHICULOS:
+                        ArrayList<Vehiculo> listaVehiculos = db.getVehiculos();
+                        mensajeTX.ponerParametros(String.valueOf(listaVehiculos.size()));
+                        for(int i=0; i< listaVehiculos.size(); i++) {
+                            mensajeTX.anadirParametro(listaVehiculos.get(i).toString());
+                        } 
+                        break;  
+                        
+                    // @author Alejandro
+                    case OBTENER_LISTA_ALMACENES:
+                        ArrayList<Almacen> listaAlmacenes = db.getAlmacenes();
+                        mensajeTX.ponerParametros(String.valueOf(listaAlmacenes.size()));
+                        for(int i=0; i< listaAlmacenes.size(); i++) {
+                            mensajeTX.anadirParametro(listaAlmacenes.get(i).toString());
+                        } 
+                        break;  
+                        
+                    // @author Alejandro
+                    case OBTENER_LISTA_ALBERGUES:
+                        ArrayList<Albergue> listaAlbergues = db.getAlbergues();
+                        mensajeTX.ponerParametros(String.valueOf(listaAlbergues.size()));
+                        for(int i=0; i< listaAlbergues.size(); i++) {
+                            mensajeTX.anadirParametro(listaAlbergues.get(i).toString());
+                        } 
+                        break;  
+                        
+                        
                     case LOGIN:
+                        //POR HACER
                         break;
                     case REGISTRO:
+                        //POR HACER
                         break;
                 }
                 salida.writeObject(mensajeTX);
@@ -230,5 +195,6 @@ public class Comms extends Thread{
         }catch(Exception e){
             e.printStackTrace();
         }
+        
     }
 }

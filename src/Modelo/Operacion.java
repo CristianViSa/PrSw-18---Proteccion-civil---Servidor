@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Modelo;
 
 /**
@@ -10,5 +5,12 @@ package Modelo;
  * @author Cristian
  */
 public enum Operacion {
-    ALERTAS_MAPA, ACTIVAR_PLAN, HISTORIAL_ALERTAS, LOGIN, REGISTRO
+    ALERTAS_MAPA, ACTIVAR_PLAN, HISTORIAL_ALERTAS, LOGIN, REGISTRO,
+    
+    //Alejandro
+    OBTENER_LISTA_VOLUNTARIOS, OBTENER_LISTA_VEHICULOS, OBTENER_LISTA_ALMACENES,
+    OBTENER_LISTA_ALBERGUES, ELIMINAR_VOLUNTARIO, ELIMINAR_VEHICULO, ELIMINAR_ALMACEN,
+    ELIMINAR_ALBERGUE, MODIFICAR_VOLUNTARIO, MODIFICAR_VEHICULO, MODIFICAR_ALMACEN, 
+    MODIFICAR_ALBERGUE, INSERTAR_VOLUNTARIO, INSERTAR_VEHICULO, INSERTAR_ALMACEN,
+    INSERTAR_ALBERGUE
 }

@@ -132,4 +132,14 @@ public class Almacen {
             setCantidadAgua(cantidadAgua - cantidad);
         } 
     }
+    
+    @Override
+    /**
+     * Sobreescribo el método para utilzarlo en la clase comms.
+     */
+    public String toString() {
+        return id + "," + cantidadMantas + "," + cantidadComida + "," 
+                + cantidadAgua + "," + coordenadas.getX() + "," +
+                coordenadas.getY() + "," + capacidad;
+    }
 }

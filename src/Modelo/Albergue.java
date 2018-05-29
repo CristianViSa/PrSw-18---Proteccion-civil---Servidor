@@ -3,6 +3,8 @@ package Modelo;
 /**
  *
  * @author Alejandro Cencerrado
+ * 
+ * Clase definida para la manipulación del recurso Albergue.
  */
 public class Albergue {
     private String id;
@@ -16,6 +18,8 @@ public class Albergue {
      * @param capacidad
      * @param coordenadas
      * @param ocupacion 
+     * 
+     * Construye un Albergue con todos los parámetros.
      */
     public Albergue(String id, int capacidad, Coordenada coordenadas, int ocupacion) {
         this.id = id;
@@ -29,13 +33,15 @@ public class Albergue {
      * @param id
      * @param capacidad
      * @param coordenadas 
+     * 
+     * Construye con albergue desocupado.
      */
     public Albergue(String id, int capacidad, Coordenada coordenadas) {
         this(id,capacidad,coordenadas,0);
     }
     
     /**
-     * 
+     * Devuelve la id.
      * @return 
      */
     public String getId() {
@@ -43,7 +49,6 @@ public class Albergue {
     }
 
     /**
-     * 
      * @param id 
      */
     public void setId(String id) {
@@ -131,5 +136,14 @@ public class Albergue {
     
     public int plazasDisponibles(){
         return capacidad - ocupacion;
-    }  
+    }
+    
+    @Override
+    /**
+     * Sobreescribo el método para utilzarlo en la clase comms.
+     */
+    public String toString() {
+        return id + "," + capacidad + "," + coordenadas.getX() + "," +
+                coordenadas.getY() + "," + ocupacion;
+    }
 }
