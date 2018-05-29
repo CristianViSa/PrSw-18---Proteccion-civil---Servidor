@@ -120,8 +120,29 @@ public class Comms extends Thread{
                         for(int i=0; i< listaAlbergues.size(); i++) {
                             mensajeTX.anadirParametro(listaAlbergues.get(i).toString());
                         } 
-                        break;  
+                        break; 
                         
+                    // @author Alejandro    
+                    case INSERTAR_ALBERGUE:
+                        mensajeTX.ponerParametros(String.valueOf(insertarAlbergue(mensajeRX)));
+                        break;
+                        
+                    // @author Alejandro    
+                    case INSERTAR_ALMACEN:
+                        mensajeTX.ponerParametros(String.valueOf(insertarAlmacen(mensajeRX)));
+                        break;
+                        
+                    // @author Alejandro    
+                    case INSERTAR_VOLUNTARIO:
+                        mensajeTX.ponerParametros(String.valueOf(insertarVoluntario(mensajeRX)));
+                        break;
+                    
+                    // @author Alejandro    
+                    case INSERTAR_VEHICULO:
+                        mensajeTX.ponerParametros(String.valueOf(insertarVehiculo(mensajeRX)));
+                        break;
+                        
+                            
                         
                     case LOGIN:
                         //POR HACER
@@ -196,5 +217,111 @@ public class Comms extends Thread{
             e.printStackTrace();
         }
         
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de insertar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    public boolean insertarAlbergue(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        String id = tokens[0];
+        int capacidad = Integer.parseInt(tokens[1]);
+
+        float x = Float.parseFloat(tokens[2]);
+        float y = Float.parseFloat(tokens[3]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        int ocupacion = Integer.parseInt(tokens[4]);
+
+        Albergue albergue = new Albergue(id, capacidad, coordenadas,ocupacion);
+        
+        return db.insertarAlbergue(albergue);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de insertar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    public boolean insertarAlmacen(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        int cantidadMantas = Integer.parseInt(tokens[1]);
+        int cantidadComida = Integer.parseInt(tokens[2]);
+        int cantidadAgua = Integer.parseInt(tokens[3]);
+
+        float x = Float.parseFloat(tokens[4]);
+        float y = Float.parseFloat(tokens[5]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        int capacidad = Integer.parseInt(tokens[6]);
+
+        Almacen almacen = new Almacen(id, cantidadMantas, cantidadComida, cantidadAgua, coordenadas, capacidad);
+
+        return db.insertarAlmacen(almacen);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de insertar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    public boolean insertarVoluntario(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        String nombre = tokens[1];
+        String telefono = tokens[2];
+        String correo = tokens[3];
+
+        float x = Float.parseFloat(tokens[4]);
+        float y = Float.parseFloat(tokens[5]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        boolean esConductor = Boolean.parseBoolean(tokens[6]);
+        boolean disponible = Boolean.parseBoolean(tokens[7]);
+
+        Voluntario voluntario = new Voluntario(id, nombre, telefono, 
+                                    correo, coordenadas, esConductor, disponible);
+        
+        return db.insertarVoluntario(voluntario);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de insertar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    public boolean insertarVehiculo(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        String modelo = tokens[1];
+        int plazas = Integer.parseInt(tokens[2]);
+
+        float x = Float.parseFloat(tokens[3]);
+        float y = Float.parseFloat(tokens[4]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        boolean disponible = Boolean.parseBoolean(tokens[5]);
+
+        Vehiculo vehiculo = new Vehiculo(id, modelo, plazas, coordenadas, disponible);
+
+        return db.insertarVehiculo(vehiculo);
     }
 }

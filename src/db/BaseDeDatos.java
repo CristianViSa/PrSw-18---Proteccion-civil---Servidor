@@ -26,7 +26,7 @@ public class BaseDeDatos {
     private final String USUARIO = "u732306";
     private final String CONTRASENA = "u732306";
     /**
-    *
+    * @author Alejandro Cencerrado
     * @throws NamingException
     */
     public BaseDeDatos() throws NamingException {
@@ -34,6 +34,7 @@ public class BaseDeDatos {
     }
     
     /**
+     * @author Alejandro Cencerrado
     * Cerrar conexión
     * @throws SQLException
     */
@@ -49,6 +50,7 @@ public class BaseDeDatos {
     }
     
     /**
+    * @author Alejandro Cencerrado 
     * Abre conexión con la base de datos
     * @throws SQLException
     */
@@ -64,6 +66,7 @@ public class BaseDeDatos {
     }
     
     /*** 
+    * @author Alejandro Cencerrado  
     * Hace commit
     * @throws Exception
     */
@@ -77,6 +80,7 @@ public class BaseDeDatos {
     }
 
     /*** Hace rollback
+    * @author Alejandro Cencerrado* 
     * @throws Exception
     */
     public void rollback() throws Exception {
@@ -90,9 +94,9 @@ public class BaseDeDatos {
     
     /**
     * Ejecuta una consulta
-    * @param statement
-    * @return
+    * @param query
     * @throws SQLException 
+    * @author Alejandro Cencerrado
     */
     public void ejecutarUptade(String query) throws SQLException{
         Statement statment = con.createStatement(); 
@@ -100,7 +104,7 @@ public class BaseDeDatos {
     }
 
     /**
-     * 
+     * @author Alejandro Cencerrado
      * @param query
      * @return
      * @throws SQLException 
@@ -120,8 +124,10 @@ public class BaseDeDatos {
     
     
     /**
-     * 
+     * @author Alejandro Cencerrado
      * @return 
+     * 
+     * Obtiene y devuelve la lista de todos los albergues almacenados en la BD.
      */
     public ArrayList<Albergue> getAlbergues(){
         try {
@@ -150,9 +156,14 @@ public class BaseDeDatos {
     }  
     
     /**
-    * Inserción en la base de datos de un nuevo Albergue
+    * @author Alejandro Cencerrado
+    * Inserción en la base de datos de un nuevo Albergue. 
+    * Devuelve cierto en caso de éxito.
+     * @param albergue
+     * @return 
+     * 
     */
-   public void insertarAlbergue(Albergue albergue){
+   public boolean insertarAlbergue(Albergue albergue){
 
         try {
             abrirConexion();
@@ -167,12 +178,20 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
    }
    
-   public void eliminarAlbergue(String idAlbergue){
+   /**
+    * Elimina el albergue deseado de la base de datos.
+    * @author Alejandro Cencerrado
+    * @param idAlbergue 
+    * @return Devuelve cierto si la eliminación es correcta.
+    */
+   public boolean eliminarAlbergue(String idAlbergue){
        try {            
             if (buscarAlbergue(idAlbergue) != null){
                 abrirConexion();
@@ -180,14 +199,22 @@ public class BaseDeDatos {
                 ejecutarUptade(query);
                 commit();
                 cerrarConexion();
+                return true;
             }
            
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }  
+       return false;
    }
    
-   public void modificarAlbergue(Albergue albergue){
+   /**
+    * Modifica el albergue deseado en la BD.
+    * @author Alejandro Cencerrado
+    * @param albergue
+    * @return Devuelve cierto en caso de éxito.
+    */
+   public boolean modificarAlbergue(Albergue albergue){
        try {
             abrirConexion();
             String query = "Update Albergue set capacidad =" + albergue.getCapacidad() +
@@ -199,11 +226,19 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         } 
+       return false;
    }
    
+   /**
+    * @author Alejandro Cencerrado
+    * @param idAlbergue
+    * @return  Devuelve un objeto de la clase Albergue con la id buscada.
+    * En caso de no encontrarlo devuelve null.
+    */
    public Albergue buscarAlbergue(String idAlbergue){
        
        try {
@@ -238,9 +273,9 @@ public class BaseDeDatos {
         -------------------------------------------------------
     */
    
-   /**
-     * Obtiene un ArrayList con todos los platos que ofrece un restaurante.
-     * @return 
+    /**
+     * @author Alejandro Cencerrado
+     * @return Devuelve los Almacenes existentes en la Base de Datos.
      */
     public ArrayList<Almacen> getAlmacenes() {
         try {
@@ -271,9 +306,12 @@ public class BaseDeDatos {
     }
     
     /**
+    * @author Alejandro Cencerrado 
     * Inserción en la base de datos de un nuevo Albergue
+    * @param almacen
+    * @return Deuvelve cierto en caso de éxito.
     */
-   public void insertarAlmacen(Almacen almacen){
+   public boolean insertarAlmacen(Almacen almacen){
 
         try {
             abrirConexion();
@@ -290,12 +328,21 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
    }
    
-   public void eliminarAlmacen(String idAlmacen){
+   /**
+    * @author Alejandro Cencerrado
+    * 
+    * Elimina el Almacen deseado.
+    * @param idAlmacen 
+     * @return  Cierto en caso de éxito.
+    */
+   public boolean eliminarAlmacen(String idAlmacen){
        try {            
             if (buscarAlmacen(idAlmacen) != null){
                 abrirConexion();
@@ -303,14 +350,22 @@ public class BaseDeDatos {
                 ejecutarUptade(query);
                 commit();
                 cerrarConexion();
+                return true;
             }
            
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }  
+       return false;
    }
    
-   public void modificarAlmacen(Almacen almacen){
+   /**
+    * @author Alejandro Cencerrado
+    * Modifica el Almacen recibido por parámetro.
+    * @param almacen 
+     * @return  Cierto en caso de éxito.
+    */
+   public boolean modificarAlmacen(Almacen almacen){
        try {
             abrirConexion();
             String query = "Update Almacen set capacidad =" + almacen.getCapacidad() +
@@ -324,11 +379,19 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         } 
+       return false;
    }
    
+   /**
+    * @author Alejandro Cencerrado
+    * Busca el Almacen con la id pasada.
+    * @param idAlmacen
+    * @return Objeto Almacen buscado o null si no lo encuentra en la BD.
+    */
    public Almacen buscarAlmacen(String idAlmacen){
        
        try {
@@ -364,8 +427,8 @@ public class BaseDeDatos {
     */
       
     /**
-     * 
-     * @return 
+     * @author Alejandro Cencerrado
+     * @return Lista de Voluntarios existentes en la BD.
      */
     public ArrayList<Voluntario> getVoluntarios(){
         try {
@@ -396,7 +459,13 @@ public class BaseDeDatos {
         return null;
     }
 
-   public void insertarVoluntario(Voluntario voluntario){
+   /**
+    * @author Alejandro Cencerrado
+    * Lanza la inserción de un Voluntario con los datos pasados por parámetro.
+    * @param voluntario
+    * @return Cierto en caso de éxito.
+    */
+   public boolean insertarVoluntario(Voluntario voluntario){
 
         try {
             abrirConexion();
@@ -414,12 +483,19 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
    }
    
-   public void eliminarVoluntario(String id){
+   /**
+    * @author Alejandro Cencerrado
+    * @param id 
+     * @return  Cierto en caso de éxito.
+    */
+   public boolean eliminarVoluntario(String id){
        try {            
             if (buscarVoluntario(id) != null){
                 abrirConexion();
@@ -427,14 +503,21 @@ public class BaseDeDatos {
                 ejecutarUptade(query);
                 commit();
                 cerrarConexion();
+                return true;
             }
            
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }  
+       return false;
    }
    
-   public void modificarVoluntario(Voluntario voluntario){
+   /**
+    * @author Alejandro Cencerrado
+    * @param voluntario 
+     * @return  
+    */
+   public boolean modificarVoluntario(Voluntario voluntario){
        try {
             abrirConexion();
             String query = "Update Voluntario set nombre ='" + voluntario.getNombre() +
@@ -449,11 +532,18 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         } 
+       return false;
    }
    
+   /**
+    * @author Alejandro Cencerrado
+    * @param id
+    * @return Devuelve objeto de la clase Voluntario con la id buscada.
+    */
    public Voluntario buscarVoluntario(String id){
        
        try {
@@ -490,7 +580,7 @@ public class BaseDeDatos {
     */
     
      /**
-     * 
+     * @author Alejandro Cencerrado
      * @return 
      */
     public ArrayList<Vehiculo> getVehiculos(){
@@ -520,7 +610,12 @@ public class BaseDeDatos {
         return null;
     }
     
-       public void insertarVehiculo(Vehiculo vehiculo){
+    /**
+     * @author Alejandro Cencerrado
+     * @param vehiculo
+     * @return cierto en caso de éxito.
+     */
+    public boolean insertarVehiculo(Vehiculo vehiculo){
 
         try {
             abrirConexion();
@@ -536,12 +631,19 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
    }
    
-   public void eliminarVehiculo(String id){
+    /**
+     * @author Alejandro Cencerrado
+     * @param id 
+     * @return  
+     */
+   public boolean eliminarVehiculo(String id){
        try {            
             if (buscarVehiculo(id) != null){
                 abrirConexion();
@@ -549,14 +651,20 @@ public class BaseDeDatos {
                 ejecutarUptade(query);
                 commit();
                 cerrarConexion();
+                return true;
             }
            
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         }  
+       return false;
    }
    
-   public void modificarVehiculo(Vehiculo vehiculo){
+   /**
+    * @author Alejandro Cencerrado
+    * @param vehiculo 
+    */
+   public boolean modificarVehiculo(Vehiculo vehiculo){
        try {
             abrirConexion();
             String query = "Update Vehiculo set modelo ='" + vehiculo.getModelo() +
@@ -569,11 +677,18 @@ public class BaseDeDatos {
             ejecutarUptade(query);
             commit();
             cerrarConexion();
+            return true;
         } catch (Exception ex) {
             Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
         } 
+       return false;
    }
    
+   /**
+    * @author Alejandro Cencerrado
+    * @param id
+    * @return 
+    */
    public Vehiculo buscarVehiculo(String id){
        
        try {
