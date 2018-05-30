@@ -141,9 +141,89 @@ public class Comms extends Thread{
                     case INSERTAR_VEHICULO:
                         mensajeTX.ponerParametros(String.valueOf(insertarVehiculo(mensajeRX)));
                         break;
+                    
+                    // @author Alejandro
+                    case MODIFICAR_VOLUNTARIO:
+                        mensajeTX.ponerParametros(String.valueOf(modificarVoluntario(mensajeRX)));
+                        break;
+                    // @author Alejandro
+                    case MODIFICAR_VEHICULO:
+                        mensajeTX.ponerParametros(String.valueOf(modificarVehiculo(mensajeRX)));
+                        break;
                         
-                            
+                    // @author Alejandro
+                    case MODIFICAR_ALMACEN:
+                        mensajeTX.ponerParametros(String.valueOf(modificarAlmacen(mensajeRX)));
+                        break;
                         
+                    // @author Alejandro
+                    case MODIFICAR_ALBERGUE:
+                        mensajeTX.ponerParametros(String.valueOf(modificarAlbergue(mensajeRX)));
+                        break;
+                    
+                    // @author Alejandro
+                    case ELIMINAR_VOLUNTARIO:
+                        mensajeTX.ponerParametros(String.valueOf(eliminarVoluntario(mensajeRX)));
+                        break;
+                    // @author Alejandro
+                    case ELIMINAR_VEHICULO:
+                        mensajeTX.ponerParametros(String.valueOf(eliminarVehiculo(mensajeRX)));
+                        break;
+                        
+                    // @author Alejandro
+                    case ELIMINAR_ALMACEN:
+                        mensajeTX.ponerParametros(String.valueOf(eliminarAlmacen(mensajeRX)));
+                        break;
+                        
+                    // @author Alejandro
+                    case ELIMINAR_ALBERGUE:
+                        mensajeTX.ponerParametros(String.valueOf(eliminarAlbergue(mensajeRX)));
+                        break;
+                    
+                    // @author Alejandro
+                    case BUSCAR_VOLUNTARIO:                    
+                        Object busqueda = db.buscarVoluntario(mensajeRX.verParametros());
+                        if (busqueda == null){
+                            mensajeTX.ponerParametros("null");
+                        }
+                        else {
+                            mensajeTX.ponerParametros(busqueda.toString());
+                        }                        
+                        break;
+                        
+                    // @author Alejandro
+                    case BUSCAR_VEHICULO:
+                        busqueda = db.buscarVehiculo(mensajeRX.verParametros());
+                        if (busqueda == null){
+                            mensajeTX.ponerParametros("null");
+                        }
+                        else {
+                            mensajeTX.ponerParametros(busqueda.toString());
+                        }
+                        break;
+                    // @author Alejandro
+                    case BUSCAR_ALMACEN:
+                        busqueda = db.buscarAlmacen(mensajeRX.verParametros());
+                        if (busqueda == null){
+                            mensajeTX.ponerParametros("null");
+                        }
+                        else {
+                            mensajeTX.ponerParametros(busqueda.toString());
+                        }
+                        break;
+                    
+                    // @author Alejandro
+                    case BUSCAR_ALBERGUE:
+                        busqueda = db.buscarAlbergue(mensajeRX.verParametros());
+                        if (busqueda == null){
+                            mensajeTX.ponerParametros("null");
+                        }
+                        else {
+                            mensajeTX.ponerParametros(busqueda.toString());
+                        }
+                        break;
+                        
+                                                             
                     case LOGIN:
                         //POR HACER
                         break;
@@ -225,7 +305,7 @@ public class Comms extends Thread{
      * @param mensajeRX
      * @return Devuelve cierto en caso de éxito.
      */
-    public boolean insertarAlbergue(Mensaje mensajeRX){
+    private boolean insertarAlbergue(Mensaje mensajeRX){
         String parametros = mensajeRX.verParametros();
         String delims = ",";
         String[] tokens = parametros.split(delims);
@@ -249,7 +329,7 @@ public class Comms extends Thread{
      * @param mensajeRX
      * @return Devuelve cierto en caso de éxito.
      */
-    public boolean insertarAlmacen(Mensaje mensajeRX){
+    private boolean insertarAlmacen(Mensaje mensajeRX){
         String parametros = mensajeRX.verParametros();
         String delims = ",";
         String[] tokens = parametros.split(delims);
@@ -276,7 +356,7 @@ public class Comms extends Thread{
      * @param mensajeRX
      * @return Devuelve cierto en caso de éxito.
      */
-    public boolean insertarVoluntario(Mensaje mensajeRX){
+    private boolean insertarVoluntario(Mensaje mensajeRX){
         String parametros = mensajeRX.verParametros();
         String delims = ",";
         String[] tokens = parametros.split(delims);
@@ -305,7 +385,7 @@ public class Comms extends Thread{
      * @param mensajeRX
      * @return Devuelve cierto en caso de éxito.
      */
-    public boolean insertarVehiculo(Mensaje mensajeRX){
+    private boolean insertarVehiculo(Mensaje mensajeRX){
         String parametros = mensajeRX.verParametros();
         String delims = ",";
         String[] tokens = parametros.split(delims);
@@ -324,4 +404,161 @@ public class Comms extends Thread{
 
         return db.insertarVehiculo(vehiculo);
     }
+    
+        /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de modificar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean modificarAlbergue(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        int capacidad = Integer.parseInt(tokens[1]);
+
+        float x = Float.parseFloat(tokens[2]);
+        float y = Float.parseFloat(tokens[3]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        int ocupacion = Integer.parseInt(tokens[4]);
+
+        Albergue albergue = new Albergue(id, capacidad, coordenadas,ocupacion);
+        
+        return db.modificarAlbergue(albergue);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de modificar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean modificarAlmacen(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        int cantidadMantas = Integer.parseInt(tokens[1]);
+        int cantidadComida = Integer.parseInt(tokens[2]);
+        int cantidadAgua = Integer.parseInt(tokens[3]);
+
+        float x = Float.parseFloat(tokens[4]);
+        float y = Float.parseFloat(tokens[5]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        int capacidad = Integer.parseInt(tokens[6]);
+
+        Almacen almacen = new Almacen(id, cantidadMantas, cantidadComida, cantidadAgua, coordenadas, capacidad);
+
+        return db.modificarAlmacen(almacen);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de modificar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean modificarVoluntario(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        String nombre = tokens[1];
+        String telefono = tokens[2];
+        String correo = tokens[3];
+
+        float x = Float.parseFloat(tokens[4]);
+        float y = Float.parseFloat(tokens[5]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        boolean esConductor = Boolean.parseBoolean(tokens[6]);
+        boolean disponible = Boolean.parseBoolean(tokens[7]);
+
+        Voluntario voluntario = new Voluntario(id, nombre, telefono, 
+                                    correo, coordenadas, esConductor, disponible);
+        
+        return db.modificarVoluntario(voluntario);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente creando un objeto que tratará de modificar en la BD.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean modificarVehiculo(Mensaje mensajeRX){
+        String parametros = mensajeRX.verParametros();
+        String delims = ",";
+        String[] tokens = parametros.split(delims);
+        
+        String id = tokens[0];
+        String modelo = tokens[1];
+        int plazas = Integer.parseInt(tokens[2]);
+
+        float x = Float.parseFloat(tokens[3]);
+        float y = Float.parseFloat(tokens[4]);                
+        Coordenada coordenadas = new Coordenada(x, y);
+
+        boolean disponible = Boolean.parseBoolean(tokens[5]);
+
+        Vehiculo vehiculo = new Vehiculo(id, modelo, plazas, coordenadas, disponible);
+        
+        return db.modificarVehiculo(vehiculo);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente y da la orden de eliminar de la Base 
+     * de datos el elemento con dicha id.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean eliminarVoluntario(Mensaje mensajeRX){
+        String id = mensajeRX.verParametros();
+        return db.eliminarVoluntario(id);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente y da la orden de eliminar de la Base 
+     * de datos el elemento con dicha id.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean eliminarVehiculo(Mensaje mensajeRX){
+        String id = mensajeRX.verParametros();
+        return db.eliminarVehiculo(id);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente y da la orden de eliminar de la Base 
+     * de datos el elemento con dicha id.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean eliminarAlmacen(Mensaje mensajeRX){
+        String id = mensajeRX.verParametros();
+        return db.eliminarAlmacen(id);
+    }
+    
+    /**
+     * @author Alejandro Cencerrado
+     * Lee el mansaje del cliente y da la orden de eliminar de la Base 
+     * de datos el elemento con dicha id.
+     * @param mensajeRX
+     * @return Devuelve cierto en caso de éxito.
+     */
+    private boolean eliminarAlbergue(Mensaje mensajeRX){
+        String id = mensajeRX.verParametros();
+        return db.eliminarAlbergue(id);
+    }
+    
+   
 }
