@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,17 +74,70 @@ public class Comms extends Thread{
                 switch(mensajeRX.verOperacion()){
                     //@author Cristian
                     case ALERTAS_MAPA: 
-                        mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
-                        mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
+                        ArrayList<Alerta> alertas = db.getAlertasActivas();
+                        mensajeTX.ponerParametros(String.valueOf(alertas.size()));
+                        for(int i=0; i< alertas.size(); i++) {
+                           mensajeTX.anadirParametro(alertas.get(i).toString());
+                        }
                         break;
                     //@author Cristian
                     case ACTIVAR_PLAN:
+                        String idAlerta = mensajeRX.verParametros();
+                        Alerta alertaBuscada = db.getAlerta(idAlerta);
+                        alertaBuscada.activarPlanDeProteccion();
+                        
+                        ResguardoEmergencia emergenciaAlerta 
+                                = alertaBuscada.getEmergencia();
+                        ResguardoPlan planEmergencia =
+                                emergenciaAlerta.getPlan();
+                        int vehiculosNecesarios =
+                                planEmergencia.getVehiculosNecesarios();
+                        int voluntariosNecesarios =
+                                planEmergencia.getVoluntariosNecesarios();
+                        String actuacionesNecesarios = 
+                                planEmergencia.getActuacionesNecesarias();
+                        List<Voluntario> voluntariosDisponibles =
+                                db.getVoluntarios();
+                        List<Vehiculo> vehiculosDisponibles = 
+                                db.getVehiculos();
+                        List<ResguardoZona> zonasDeSeguridad =
+                                db.getZonasDeSeguridad();
+                        // posible excepcion
+                        ResguardoZona zonaSegura = zonasDeSeguridad.get(0);
+                        alertaBuscada.asignarZona(zonaSegura);
+                        for(Voluntario voluntario : voluntariosDisponibles){
+                            if(voluntariosNecesarios > 0){
+                                alertaBuscada.asignarVoluntario(voluntario);
+                            }
+                        }
+                        for(Vehiculo vehiculo : vehiculosDisponibles){
+                            if(vehiculosNecesarios > 0){
+                                alertaBuscada.asignarVehiculo(vehiculo);
+                            }
+                        }
+                        List<Albergue> alberguesZona = new ArrayList<Albergue>(zonaSegura.getAlbergues()); 
+                        for(Albergue albergue : alberguesZona){
+                            if(!albergue.estaLleno()){
+                                int afectados = alertaBuscada.getAfectados();
+                                int ocupacion = albergue.getOcupacion();
+                                albergue.alojar(alertaBuscada.getAfectados());
+                                int alojados = albergue.getOcupacion() - ocupacion;
+                                if(alojados >= afectados){
+                                    break; // no aloja mas gente
+                                }
+                            }
+                        }
                         mensajeTX.ponerParametros("true");
                         break;
                     //@author Cristian
                     case HISTORIAL_ALERTAS:
-                        mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
-                        mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
+                        ArrayList<Alerta> historial = db.getAlertas();
+                        mensajeTX.ponerParametros(String.valueOf(historial.size()));
+                        for(int i=0; i< historial.size(); i++) {
+                           mensajeTX.anadirParametro(historial.get(i).toString());
+                        } 
+                        //mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
+                        //mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
                         break;
                         
                     // @author Alejandro

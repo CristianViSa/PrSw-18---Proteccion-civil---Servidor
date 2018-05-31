@@ -10,10 +10,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
 import Modelo.Albergue;
+import Modelo.Alerta;
 import Modelo.Almacen;
 import Modelo.Coordenada;
+import Modelo.ResguardoEmergencia;
+import Modelo.ResguardoPlan;
+import Modelo.ResguardoZona;
 import Modelo.Vehiculo;
 import Modelo.Voluntario;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -265,7 +271,32 @@ public class BaseDeDatos {
    }
    
    
-   
+   /**
+    * @author Cristian
+    * 
+    */
+   public ArrayList<Albergue> getAlberguesZona(String idZona){
+       
+       try {
+            abrirConexion();
+            String query="SELECT id_albergue from Tiene where id_zona='" + idZona +"'";            
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            ArrayList<Albergue> albergues = new ArrayList<Albergue>();
+            if(resultSet.next()){
+                Albergue albergue = this.buscarAlbergue(resultSet.getString("id_albergue"));
+                albergues.add(albergue);
+            }
+            resultSet.close();
+            cerrarConexion();
+
+            return albergues;
+            
+        } catch (Exception ex) {
+            Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+   }
+    
    
    /*
         -------------------------------------------------------
@@ -418,7 +449,31 @@ public class BaseDeDatos {
         }
         return null;
    }
-    
+   /**
+    * @author Cristian
+    * 
+    */
+   public ArrayList<Almacen> getAlmacenesZona(String idZona){
+       
+       try {
+            abrirConexion();
+            String query="SELECT id_almacen from Dispone where id_zona='" + idZona +"'";            
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            ArrayList<Almacen> almacenes = new ArrayList<Almacen>();
+            if(resultSet.next()){
+                Almacen almacen = this.buscarAlmacen(resultSet.getString("id_almacen"));
+                almacenes.add(almacen);
+            }
+            resultSet.close();
+            cerrarConexion();
+
+            return almacenes;
+            
+        } catch (Exception ex) {
+            Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+   }
     
     /*
         -------------------------------------------------------
@@ -714,5 +769,286 @@ public class BaseDeDatos {
         }
         return null;
    }
+   
+   
+    /*
+        -------------------------------------------------------
+        ------------------   ALERTAS   -------------------------
+        -------------------------------------------------------
+    */
+    
+    
+    /**
+     * @author Cristian
+     * Obtiene y devuelve la lista de todas las alertas almacenadas en la BD.
+     */
+    public ArrayList<Alerta> getAlertas(){
+        try {
+            abrirConexion();
+            String query="SELECT * from Alerta";
+            ArrayList<Alerta> vectorAlertas = new ArrayList<Alerta>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                String idEmergencia = resultSet.getString("id_emergencia");
+                String idZona = resultSet.getString("id_zona");
+                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
+                ResguardoZona zona = buscarZona(idZona);
+                int gestion = resultSet.getInt("gestionada");
+                int activa = resultSet.getInt("activa");
+                boolean gestionada = false;
+                boolean activada = false;
+                if(gestion == 1){   gestionada = true;}
+                if(activa == 1){    activada = true;}
+
+                Alerta alerta = new Alerta(new Coordenada(resultSet.getFloat("coordenadaX"), 
+                                    resultSet.getFloat("coordenadaY")),
+                                    emergencia,
+                                    Integer.parseInt(resultSet.getString("id")),
+                                    gestionada,
+                                    null, null,
+                                    new Date(resultSet.getDate("fecha").getTime()),
+                                    activada,
+                                    zona, 
+                                    resultSet.getInt("afectados"));
+                vectorAlertas.add(alerta);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return vectorAlertas;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    }  
+    /**
+     * @author Cristian
+     * Obtiene y devuelve la lista de todas las alertas almacenadas en la BD.
+     */
+    public ArrayList<Alerta> getAlertasActivas(){
+        try {
+            abrirConexion();
+            String query="SELECT * from Alerta WHERE activa = 1";
+            ArrayList<Alerta> alertas = new ArrayList<Alerta>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                String idEmergencia = resultSet.getString("id_emergencia");
+                String idZona = resultSet.getString("id_zona");
+                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
+                ResguardoZona zona = buscarZona(idZona);
+                int gestion = resultSet.getInt("gestionada");
+                int activa = resultSet.getInt("activa");
+                boolean gestionada = false;
+                boolean activada = false;
+                if(gestion == 1){   gestionada = true;}
+                if(activa == 1){    activada = true;}
+
+                Alerta alerta = new Alerta(new Coordenada(resultSet.getFloat("coordenadaX"), 
+                                    resultSet.getFloat("coordenadaY")),
+                                    emergencia,
+                                    Integer.parseInt(resultSet.getString("id")),
+                                    gestionada,
+                                    null, null,
+                                    new Date(resultSet.getDate("fecha").getTime()),
+                                    activada,
+                                    zona, 
+                                    resultSet.getInt("afectados"));
+                alertas.add(alerta);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return alertas;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    }  
+    /**
+    * @author Cristian
+    */
+    public Alerta getAlerta(String id){
+       
+       try {
+            abrirConexion();
+            String query="SELECT * from Alerta where id='" + id +"'";            
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            Alerta alerta = null;
+            if(resultSet.next()){
+                String idEmergencia = resultSet.getString("id_emergencia");
+                String idZona = resultSet.getString("id_zona");
+                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
+                ResguardoZona zona = buscarZona(idZona);
+                int gestion = resultSet.getInt("gestionada");
+                int activa = resultSet.getInt("activa");
+                boolean gestionada = false;
+                boolean activada = false;
+                if(gestion == 1){   gestionada = true;}
+                if(activa == 1){    activada = true;}
+
+                alerta = new Alerta(new Coordenada(resultSet.getFloat("coordenadaX"), 
+                                    resultSet.getFloat("coordenadaY")),
+                                    emergencia,
+                                    Integer.parseInt(resultSet.getString("id")),
+                                    gestionada,
+                                    new ArrayList<Voluntario>(),
+                                    new ArrayList<Vehiculo>(),
+                                    new Date(resultSet.getDate("fecha").getTime()),
+                                    activada,
+                                    zona, 
+                                    resultSet.getInt("afectados"));
+            }
+            resultSet.close();
+            cerrarConexion();
+
+            return alerta;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+   }
+    
+    
+    /*
+        -------------------------------------------------------
+        ------------------   ZONAS DE SEGURIDAD   -------------------------
+        -------------------------------------------------------
+    */
+    
+    /**
+    * @author Cristian
+    */
+    public ResguardoZona buscarZona(String id){
+       
+       try {
+            abrirConexion();
+            String query="SELECT * from ZonaDeSeguridad where id='" + id +"'";            
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            ResguardoZona zona = null;
+            if(resultSet.next()){
+                List<Albergue> albergues = getAlberguesZona(id);
+                List<Almacen> almacenes = getAlmacenesZona(id);
+                
+                zona = new ResguardoZona(new Coordenada(resultSet.getFloat("coordenadaX"), 
+                            resultSet.getFloat("coordenadaY")),
+                            Integer.parseInt(resultSet.getString("id")),
+                            almacenes, albergues);		
+            }
+            resultSet.close();
+            cerrarConexion();
+
+            return zona;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+   }
+    
+    /**
+     * @author Cristian
+     * Obtiene y devuelve la lista de todas las alertas almacenadas en la BD.
+     */
+    public ArrayList<ResguardoZona> getZonasDeSeguridad(){
+        try {
+            abrirConexion();
+            String query="SELECT * from ZonaDeSeguridad ";
+            ArrayList<ResguardoZona> alertas = new ArrayList<ResguardoZona>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                ArrayList<Almacen> almacenes = getAlmacenesZona(id);
+                ArrayList<Albergue> albergues = getAlberguesZona(id);
+                
+                ResguardoZona zona = new ResguardoZona(new Coordenada(
+                    resultSet.getInt("coordenadaX"),
+                    resultSet.getInt("coordenadaY")),
+                    Integer.parseInt(id),
+                    almacenes,  albergues);
+                alertas.add(zona);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return alertas;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    /*
+        -------------------------------------------------------
+        ------------------   EMERGENCIAS   -------------------------
+        -------------------------------------------------------
+    */
+    
+    /**
+    * @author Cristian
+    */
+    public ResguardoEmergencia buscarEmergencia(String id){
+       
+       try {
+            abrirConexion();
+            String query="SELECT * from Emergencia where id='" + id +"'";            
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            ResguardoEmergencia emergencia = null;
+            if(resultSet.next()){
+                String idPlan = resultSet.getString("idPlan");
+                ResguardoPlan plan = buscarPlan(idPlan);
+                emergencia = new ResguardoEmergencia(resultSet.getString("tipo"),
+                                Integer.parseInt(resultSet.getString("id")),
+                                resultSet.getInt("nivel"),
+                                plan);		
+            }
+            resultSet.close();
+            cerrarConexion();
+
+            return emergencia;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+   }
+    /*
+        -------------------------------------------------------
+        ------------------   PLANES DE PROTECCION   -------------------------
+        -------------------------------------------------------
+    */
+       /**
+    * @author Cristian
+    */
+    public ResguardoPlan buscarPlan(String id){
+        try {
+             abrirConexion();
+             String query="SELECT * from PlanDeProteccion where id='" + id +"'";            
+             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+             ResguardoPlan plan = null;
+             if(resultSet.next()){
+                plan = new ResguardoPlan(Integer.parseInt(resultSet.getString("id")),
+                    resultSet.getString("nombre"),
+                    resultSet.getInt("vehiculosNecesarios"),
+                    resultSet.getInt("voluntariosNecesarios"),
+                    resultSet.getString("actuacionesNecesarios"));		
+             }
+             resultSet.close();
+             cerrarConexion();
+
+             return plan;
+
+         } catch (Exception ex) {
+             ex.printStackTrace();
+         }
+         return null;
+    } 
+    
 }
 	
