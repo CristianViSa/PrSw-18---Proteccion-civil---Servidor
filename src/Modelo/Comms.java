@@ -86,9 +86,9 @@ public class Comms extends Thread{
                         Alerta alertaBuscada = db.getAlerta(idAlerta);
                         alertaBuscada.activarPlanDeProteccion();
                         
-                        ResguardoEmergencia emergenciaAlerta 
+                        Emergencia emergenciaAlerta 
                                 = alertaBuscada.getEmergencia();
-                        ResguardoPlan planEmergencia =
+                        PlanProteccion planEmergencia =
                                 emergenciaAlerta.getPlan();
                         int vehiculosNecesarios =
                                 planEmergencia.getVehiculosNecesarios();
@@ -100,10 +100,10 @@ public class Comms extends Thread{
                                 db.getVoluntarios();
                         List<Vehiculo> vehiculosDisponibles = 
                                 db.getVehiculos();
-                        List<ResguardoZona> zonasDeSeguridad =
+                        List<ZonaSeguridad> zonasDeSeguridad =
                                 db.getZonasDeSeguridad();
                         // posible excepcion
-                        ResguardoZona zonaSegura = zonasDeSeguridad.get(0);
+                        ZonaSeguridad zonaSegura = zonasDeSeguridad.get(0);
                         alertaBuscada.asignarZona(zonaSegura);
                         for(Voluntario voluntario : voluntariosDisponibles){
                             if(voluntariosNecesarios > 0){
@@ -276,8 +276,61 @@ public class Comms extends Thread{
                             mensajeTX.ponerParametros(busqueda.toString());
                         }
                         break;
-                        
-                                                             
+                    // @author Miguel
+                    case LISTAR_PLANES:
+                        ArrayList<PlanProteccion> listaPlanes = db.getPlanes();
+                        mensajeTX.ponerParametros(String.valueOf(listaPlanes.size()));
+                        for(int i=0; i< listaPlanes.size(); i++) {
+                            mensajeTX.anadirParametro(listaPlanes.get(i).toString());
+                        } 
+                        break;
+                    case MOD_PLAN:
+                        String parametros = mensajeRX.verParametros();
+                        String delims = ",";
+                        String[] tokens = parametros.split(delims);
+                        int numPlanes = Integer.parseInt(tokens[0]);
+                        int longitudParametros = 5;
+                        int posicion;
+                        for(int i = 0; i < numPlanes; i++){
+                            posicion = i*longitudParametros;
+                            posicion -= 1;
+                            System.out.println("--PLAN RECIBIDO:\n\t"+tokens[1+posicion] + "\n\t" + tokens[2+posicion]+ "\n\t" + tokens[3+posicion]+ "\n\t" + tokens[4+posicion]+ "\n\t" + tokens[5+posicion]);
+                            String idPlan = tokens[1+posicion];
+                            //System.out.println("\t"+tokens[2+posicion]);
+                            String nombrePlan = tokens[2+posicion];
+                            int vehiculos = Integer.parseInt(tokens[3+posicion]);
+                            int voluntarios = Integer.parseInt(tokens[4+posicion]);
+                            String actuaciones = tokens[5+posicion];
+
+                            PlanProteccion plan = new PlanProteccion(idPlan, nombrePlan, 
+                                    vehiculos, voluntarios, actuaciones);
+                            db.modPlan(plan);
+                        }
+                        //System.out.println(cadena);
+                        //PlanProteccion plan = new PlanProteccion(mensajeRX.verParametros());
+                        break;
+                    case ELIMINAR_PLAN:
+                        parametros = mensajeRX.verParametros();
+                        delims = ",";
+                        tokens = parametros.split(delims);
+                        numPlanes = Integer.parseInt(tokens[0]);
+                        longitudParametros = 5;
+                        for(int i = 0; i < numPlanes; i++){
+                            posicion = i*longitudParametros;
+                            posicion -= 1;
+                            System.out.println("--PLAN RECIBIDO:\n\t"+tokens[1+posicion] + "\n\t" + tokens[2+posicion]+ "\n\t" + tokens[3+posicion]+ "\n\t" + tokens[4+posicion]+ "\n\t" + tokens[5+posicion]);
+                            String idPlan = tokens[1+posicion];
+                            //System.out.println("\t"+tokens[2+posicion]);
+                            String nombrePlan = tokens[2+posicion];
+                            int vehiculos = Integer.parseInt(tokens[3+posicion]);
+                            int voluntarios = Integer.parseInt(tokens[4+posicion]);
+                            String actuaciones = tokens[5+posicion];
+
+                            PlanProteccion plan = new PlanProteccion(idPlan, nombrePlan, 
+                                    vehiculos, voluntarios, actuaciones);
+                            db.eliminarPlan(plan);
+                        }
+                        break;
                     case LOGIN:
                         //POR HACER
                         break;

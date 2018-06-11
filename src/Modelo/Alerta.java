@@ -15,21 +15,21 @@ import java.util.List;
  */
 public class Alerta {
     private Coordenada coordenadas;
-    private ResguardoEmergencia emergencia;
+    private Emergencia emergencia;
     private int id;
     private boolean gestionada;
     private List<Voluntario> voluntarios;
     private List<Vehiculo> vehiculos;
     private Date fecha;
     private boolean activa;
-    private ResguardoZona zona; 
+    private ZonaSeguridad zona; 
     private int afectados;
 
     /**
      *
      * @author Cristian
      */        
-    public Alerta(Coordenada coordenadas, ResguardoEmergencia emergencia, int afectados){
+    public Alerta(Coordenada coordenadas, Emergencia emergencia, int afectados){
         this.coordenadas = coordenadas;
         this.emergencia = emergencia;
         id = 0;
@@ -46,9 +46,9 @@ public class Alerta {
      * 
      * @author Cristian
      */        
-    public Alerta(Coordenada coordenadas, ResguardoEmergencia emergencia
+    public Alerta(Coordenada coordenadas, Emergencia emergencia
             ,int id ,boolean gestionada, List<Voluntario> voluntarios,
-            List<Vehiculo> vehiculos, Date fecha, boolean activa, ResguardoZona zona
+            List<Vehiculo> vehiculos, Date fecha, boolean activa, ZonaSeguridad zona
             , int afectados){
         this.coordenadas = coordenadas;
         this.emergencia = emergencia;
@@ -79,14 +79,14 @@ public class Alerta {
      * 
      * @autor Cristian 
      */
-    public ResguardoEmergencia getEmergencia() {
+    public Emergencia getEmergencia() {
         return emergencia;
     }
     /**
      * 
      * @autor Cristian 
      */
-    public void setEmergencia(ResguardoEmergencia emergencia) {
+    public void setEmergencia(Emergencia emergencia) {
         this.emergencia = emergencia;
     }
     /**
@@ -186,14 +186,14 @@ public class Alerta {
      * 
      * @autor Cristian 
      */
-    public ResguardoZona getZona() {
+    public ZonaSeguridad getZona() {
         return zona;
     }
     /**
      * 
      * @autor Cristian 
      */
-    public void asignarZona(ResguardoZona zona) {
+    public void asignarZona(ZonaSeguridad zona) {
         this.zona = zona;
     }
     /**

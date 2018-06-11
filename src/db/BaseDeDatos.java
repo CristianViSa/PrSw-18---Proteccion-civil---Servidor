@@ -13,9 +13,9 @@ import Modelo.Albergue;
 import Modelo.Alerta;
 import Modelo.Almacen;
 import Modelo.Coordenada;
-import Modelo.ResguardoEmergencia;
-import Modelo.ResguardoPlan;
-import Modelo.ResguardoZona;
+import Modelo.Emergencia;
+import Modelo.PlanProteccion;
+import Modelo.ZonaSeguridad;
 import Modelo.Vehiculo;
 import Modelo.Voluntario;
 import java.util.Date;
@@ -104,7 +104,7 @@ public class BaseDeDatos {
     * @throws SQLException 
     * @author Alejandro Cencerrado
     */
-    public void ejecutarUptade(String query) throws SQLException{
+    public void ejecutarUpdate(String query) throws SQLException{
         Statement statment = con.createStatement(); 
         statment.executeUpdate(query); 
     }
@@ -181,7 +181,7 @@ public class BaseDeDatos {
                             + albergue.getOcupacion() 
                             + ")";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -202,7 +202,7 @@ public class BaseDeDatos {
             if (buscarAlbergue(idAlbergue) != null){
                 abrirConexion();
                 String query = "Delete from Albergue where id='" + idAlbergue + "'";
-                ejecutarUptade(query);
+                ejecutarUpdate(query);
                 commit();
                 cerrarConexion();
                 return true;
@@ -229,7 +229,7 @@ public class BaseDeDatos {
                                 ", ocupacion="+albergue.getOcupacion() +
                                 " where id='"+albergue.getId()+"'";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -356,7 +356,7 @@ public class BaseDeDatos {
                             + almacen.getCapacidad()
                             + ")";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -378,7 +378,7 @@ public class BaseDeDatos {
             if (buscarAlmacen(idAlmacen) != null){
                 abrirConexion();
                 String query = "Delete from Almacen where id='" + idAlmacen + "'";
-                ejecutarUptade(query);
+                ejecutarUpdate(query);
                 commit();
                 cerrarConexion();
                 return true;
@@ -407,7 +407,7 @@ public class BaseDeDatos {
                                 ", cantidadAgua="+almacen.getCantidadAgua() +
                                 " where id='"+almacen.getId()+"'";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -535,7 +535,7 @@ public class BaseDeDatos {
                             + voluntario.getDisponible()
                             + ")";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -555,7 +555,7 @@ public class BaseDeDatos {
             if (buscarVoluntario(id) != null){
                 abrirConexion();
                 String query = "Delete from Voluntario where id='" + id + "'";
-                ejecutarUptade(query);
+                ejecutarUpdate(query);
                 commit();
                 cerrarConexion();
                 return true;
@@ -584,7 +584,7 @@ public class BaseDeDatos {
                                 ", estaDisponible=" + voluntario.getDisponible() +
                                 " where id='"+voluntario.getId()+"'";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -683,7 +683,7 @@ public class BaseDeDatos {
                             + vehiculo.isDisponible()
                             + ")";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -703,7 +703,7 @@ public class BaseDeDatos {
             if (buscarVehiculo(id) != null){
                 abrirConexion();
                 String query = "Delete from Vehiculo where id='" + id + "'";
-                ejecutarUptade(query);
+                ejecutarUpdate(query);
                 commit();
                 cerrarConexion();
                 return true;
@@ -729,7 +729,7 @@ public class BaseDeDatos {
                                 ", disponible=" + vehiculo.isDisponible() +
                                 " where id='" + vehiculo.getId() + "'";
 
-            ejecutarUptade(query);
+            ejecutarUpdate(query);
             commit();
             cerrarConexion();
             return true;
@@ -792,8 +792,8 @@ public class BaseDeDatos {
             while (resultSet.next()) {
                 String idEmergencia = resultSet.getString("id_emergencia");
                 String idZona = resultSet.getString("id_zona");
-                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
-                ResguardoZona zona = buscarZona(idZona);
+                Emergencia emergencia = buscarEmergencia(idEmergencia);
+                ZonaSeguridad zona = buscarZona(idZona);
                 int gestion = resultSet.getInt("gestionada");
                 int activa = resultSet.getInt("activa");
                 boolean gestionada = false;
@@ -837,8 +837,8 @@ public class BaseDeDatos {
             while (resultSet.next()) {
                 String idEmergencia = resultSet.getString("id_emergencia");
                 String idZona = resultSet.getString("id_zona");
-                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
-                ResguardoZona zona = buscarZona(idZona);
+                Emergencia emergencia = buscarEmergencia(idEmergencia);
+                ZonaSeguridad zona = buscarZona(idZona);
                 int gestion = resultSet.getInt("gestionada");
                 int activa = resultSet.getInt("activa");
                 boolean gestionada = false;
@@ -881,8 +881,8 @@ public class BaseDeDatos {
             if(resultSet.next()){
                 String idEmergencia = resultSet.getString("id_emergencia");
                 String idZona = resultSet.getString("id_zona");
-                ResguardoEmergencia emergencia = buscarEmergencia(idEmergencia);
-                ResguardoZona zona = buscarZona(idZona);
+                Emergencia emergencia = buscarEmergencia(idEmergencia);
+                ZonaSeguridad zona = buscarZona(idZona);
                 int gestion = resultSet.getInt("gestionada");
                 int activa = resultSet.getInt("activa");
                 boolean gestionada = false;
@@ -923,18 +923,18 @@ public class BaseDeDatos {
     /**
     * @author Cristian
     */
-    public ResguardoZona buscarZona(String id){
+    public ZonaSeguridad buscarZona(String id){
        
        try {
             abrirConexion();
             String query="SELECT * from ZonaDeSeguridad where id='" + id +"'";            
             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
-            ResguardoZona zona = null;
+            ZonaSeguridad zona = null;
             if(resultSet.next()){
                 List<Albergue> albergues = getAlberguesZona(id);
                 List<Almacen> almacenes = getAlmacenesZona(id);
                 
-                zona = new ResguardoZona(new Coordenada(resultSet.getFloat("coordenadaX"), 
+                zona = new ZonaSeguridad(new Coordenada(resultSet.getFloat("coordenadaX"), 
                             resultSet.getFloat("coordenadaY")),
                             Integer.parseInt(resultSet.getString("id")),
                             almacenes, albergues);		
@@ -954,11 +954,11 @@ public class BaseDeDatos {
      * @author Cristian
      * Obtiene y devuelve la lista de todas las alertas almacenadas en la BD.
      */
-    public ArrayList<ResguardoZona> getZonasDeSeguridad(){
+    public ArrayList<ZonaSeguridad> getZonasDeSeguridad(){
         try {
             abrirConexion();
             String query="SELECT * from ZonaDeSeguridad ";
-            ArrayList<ResguardoZona> alertas = new ArrayList<ResguardoZona>();
+            ArrayList<ZonaSeguridad> alertas = new ArrayList<ZonaSeguridad>();
             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             
             while (resultSet.next()) {
@@ -966,7 +966,7 @@ public class BaseDeDatos {
                 ArrayList<Almacen> almacenes = getAlmacenesZona(id);
                 ArrayList<Albergue> albergues = getAlberguesZona(id);
                 
-                ResguardoZona zona = new ResguardoZona(new Coordenada(
+                ZonaSeguridad zona = new ZonaSeguridad(new Coordenada(
                     resultSet.getInt("coordenadaX"),
                     resultSet.getInt("coordenadaY")),
                     Integer.parseInt(id),
@@ -993,17 +993,17 @@ public class BaseDeDatos {
     /**
     * @author Cristian
     */
-    public ResguardoEmergencia buscarEmergencia(String id){
+    public Emergencia buscarEmergencia(String id){
        
        try {
             abrirConexion();
             String query="SELECT * from Emergencia where id='" + id +"'";            
             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
-            ResguardoEmergencia emergencia = null;
+            Emergencia emergencia = null;
             if(resultSet.next()){
                 String idPlan = resultSet.getString("idPlan");
-                ResguardoPlan plan = buscarPlan(idPlan);
-                emergencia = new ResguardoEmergencia(resultSet.getString("tipo"),
+                PlanProteccion plan = buscarPlan(idPlan);
+                emergencia = new Emergencia(resultSet.getString("tipo"),
                                 Integer.parseInt(resultSet.getString("id")),
                                 resultSet.getInt("nivel"),
                                 plan);		
@@ -1026,14 +1026,14 @@ public class BaseDeDatos {
        /**
     * @author Cristian
     */
-    public ResguardoPlan buscarPlan(String id){
+    public PlanProteccion buscarPlan(String id){
         try {
              abrirConexion();
              String query="SELECT * from PlanDeProteccion where id='" + id +"'";            
              ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
-             ResguardoPlan plan = null;
+             PlanProteccion plan = null;
              if(resultSet.next()){
-                plan = new ResguardoPlan(Integer.parseInt(resultSet.getString("id")),
+                plan = new PlanProteccion(resultSet.getString("id"),
                     resultSet.getString("nombre"),
                     resultSet.getInt("vehiculosNecesarios"),
                     resultSet.getInt("voluntariosNecesarios"),
@@ -1049,6 +1049,72 @@ public class BaseDeDatos {
          }
          return null;
     } 
+    
+    /*
+     * @author Miguel
+    */
+    public ArrayList<PlanProteccion> getPlanes(){
+        try {
+            abrirConexion();
+            String query="SELECT * from PlanDeProteccion";
+            ArrayList<PlanProteccion> vectorPlanes = new ArrayList<PlanProteccion>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                String idPlan = resultSet.getString("id");
+                String nombrePlan = resultSet.getString("nombre");
+                int vehiculosNecesarios = resultSet.getInt("vehiculosNecesarios");
+                int voluntariosNecesarios = resultSet.getInt("voluntariosNecesarios");
+                String actuaciones = resultSet.getString("actuacionesNecesarias");
+                
+                PlanProteccion plan = new PlanProteccion(idPlan, nombrePlan, vehiculosNecesarios, voluntariosNecesarios, actuaciones);
+                vectorPlanes.add(plan);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return vectorPlanes;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    }  
+    
+    public void modPlan(PlanProteccion plan){
+        try{
+            abrirConexion();
+            String query = "UPDATE PlanDeProteccion SET ";
+            query += " id=" + plan.getId();
+            query += ", nombre='" + plan.getNombre() + "'";
+            query += ", vehiculosNecesarios=" + plan.getVehiculosNecesarios();
+            query += ", voluntariosNecesarios=" + plan.getVoluntariosNecesarios();
+            query += ", actuacionesNecesarias='" + plan.getActuacionesNecesarias()+"'";
+            query += " WHERE id=" + plan.getId();
+            System.out.println("CONSULTA: "+query);
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+            //return true;
+        }catch (Exception ex) {
+           ex.printStackTrace();
+        }
+    }
+    
+    public void eliminarPlan(PlanProteccion plan){
+        try{
+            abrirConexion();
+            String query = "DELETE FROM PlanDeProteccion WHERE id="+plan.getId();
+            System.out.println("CONSULTA: "+query);
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            //ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+        }catch (Exception ex) {
+           ex.printStackTrace();
+        }
+    }
     
 }
 	

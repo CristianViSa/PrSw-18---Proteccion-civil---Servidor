@@ -10,8 +10,8 @@ package Modelo;
  * @author Cristian
  * Reemplazar por el original en un futuro.
  */
-public class ResguardoPlan {
-    private int id_plan;
+public class PlanProteccion {
+    private String id_plan;
     private String nombre;
     private int vehiculosNecesarios;
     private int voluntariosNecesarios;
@@ -21,8 +21,8 @@ public class ResguardoPlan {
      *
      * @author Cristian
      */
-    public ResguardoPlan(String nombre, int vehiculosNecesarios, int voluntariosNecesarios, String actuacionesNecesarias){
-            this.id_plan = 0;
+    public PlanProteccion(String nombre, int vehiculosNecesarios, int voluntariosNecesarios, String actuacionesNecesarias){
+            this.id_plan = "0";
             this.nombre = nombre;
             this.vehiculosNecesarios = vehiculosNecesarios;
             this.voluntariosNecesarios = voluntariosNecesarios;
@@ -32,7 +32,7 @@ public class ResguardoPlan {
      *
      * @author Cristian
      */
-    public ResguardoPlan(int id,String nombre, int vehiculosNecesarios, int voluntariosNecesarios, String actuacionesNecesarias){
+    public PlanProteccion(String id,String nombre, int vehiculosNecesarios, int voluntariosNecesarios, String actuacionesNecesarias){
         this.id_plan = id;
         this.nombre = nombre;
         this.vehiculosNecesarios = vehiculosNecesarios;
@@ -85,7 +85,7 @@ public class ResguardoPlan {
      *
      * @author Cristian
      */
-    public int getId() {
+    public String getId() {
             return id_plan;
     }
     /**
@@ -107,12 +107,15 @@ public class ResguardoPlan {
      * @author Cristian
      */
     public String toString(){
-            String cadena = "\n" + getNombre();
+            /*String cadena = "\n" + getNombre();
             cadena += "\n\nCódigo del plan: " + getId();
             cadena += "\nVehículos necesarios: " + getVehiculosNecesarios();
             cadena += "\nVoluntarios necesarios: " + getVoluntariosNecesarios();
             cadena += "\n\n\t" + getActuacionesNecesarias();
             cadena += "\n";
-            return cadena;
+            return cadena;*/
+            return getId() + "," + getNombre()+ "," +getVehiculosNecesarios() +
+                "," + getVoluntariosNecesarios() + "," + getActuacionesNecesarias();
     }
+    
 }

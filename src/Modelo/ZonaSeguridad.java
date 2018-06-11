@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Cristian
  */
-public class ResguardoZona {
+public class ZonaSeguridad {
     private Coordenada coordenada;
     private int id;
     private List<Almacen> almacenes;
@@ -20,7 +20,7 @@ public class ResguardoZona {
      *
      * @author Cristian
      */
-    public ResguardoZona(Coordenada coordenada, int id, List almacenes, List albergues){
+    public ZonaSeguridad(Coordenada coordenada, int id, List almacenes, List albergues){
         this.coordenada = coordenada;
         this.id = id;
         this.almacenes = almacenes;

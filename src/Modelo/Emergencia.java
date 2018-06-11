@@ -10,18 +10,18 @@ package Modelo;
  * @author Cristian
  */
 
-public class ResguardoEmergencia {
+public class Emergencia {
     private String tipo;
     private int id;
     private int nivel;
-    private ResguardoPlan plan;
+    private PlanProteccion plan;
     
     /**
      * 
      * Constructor
      * @author Cristian
      */
-    public ResguardoEmergencia(String tipo, int id, int nivel, ResguardoPlan plan){
+    public Emergencia(String tipo, int id, int nivel, PlanProteccion plan){
         this.tipo = tipo;
         this.id = id;
         this.nivel = nivel;
@@ -33,7 +33,7 @@ public class ResguardoEmergencia {
      * Constructor
      * @author Cristian
      */
-    public ResguardoEmergencia(String tipo, int nivel){
+    public Emergencia(String tipo, int nivel){
         this.tipo = tipo;
         this.id = 0;
         this.nivel = nivel;
@@ -68,7 +68,7 @@ public class ResguardoEmergencia {
      * Getter
      * @author Cristian
      */
-    public ResguardoPlan getPlan(){
+    public PlanProteccion getPlan(){
         return plan;
     }
     
@@ -77,7 +77,7 @@ public class ResguardoEmergencia {
      * Setter 
      * @author Cristian
      */
-    public void setPlan(ResguardoPlan plan){
+    public void setPlan(PlanProteccion plan){
         this.plan = plan;
     }
     public String toString(){
