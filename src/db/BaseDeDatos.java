@@ -626,7 +626,39 @@ public class BaseDeDatos {
         }
         return null;
    }
-    
+/**
+ * Devuelve los voluntarios que estan asociados a una alerta
+ * @author Cristian 
+ */
+public ArrayList<Voluntario> getVoluntariosAlerta(String id){
+
+    try {
+        abrirConexion();
+        String query="SELECT * from Voluntario, Participa where Participa.id_alerta='" + id +"' AND Voluntario.id = Participa.id_voluntario";            
+        ArrayList<Voluntario> vectorVoluntarios = new ArrayList<Voluntario>();
+        ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+
+        while (resultSet.next()) {
+            Voluntario voluntario = new Voluntario(resultSet.getString("id"),
+                                    resultSet.getString("nombre"),
+                                    resultSet.getString("telefono"),
+                                    resultSet.getString("correo"),
+                                    new Coordenada(resultSet.getFloat("coordenadaX"), 
+                                            resultSet.getFloat("coordenadaY")),
+                                    resultSet.getBoolean("esConductor"),
+                                    resultSet.getBoolean("estaDisponible"));  
+            vectorVoluntarios.add(voluntario);
+        }		
+        resultSet.close();
+        cerrarConexion();
+
+        return vectorVoluntarios;
+
+    } catch (Exception ex) {
+        Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+}
     
     /*
         -------------------------------------------------------
@@ -770,7 +802,37 @@ public class BaseDeDatos {
         return null;
    }
    
-   
+   /**
+     * @author Cristian
+     * 
+     */
+    public ArrayList<Vehiculo> getVehiculosAlerta(String id){
+        try {
+            abrirConexion();
+            String query="SELECT * from Vehiculo, Precisa where Precisa.id_alerta='" + id +"' AND Vehiculo.id = Precisa.id_vehiculo";
+            ArrayList<Vehiculo> vectorVehiculos = new ArrayList<Vehiculo>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                Vehiculo vehiculo = new Vehiculo(resultSet.getString("id"),
+                                        resultSet.getString("modelo"),
+                                        resultSet.getInt("plazas"),
+                                        new Coordenada(resultSet.getFloat("coordenadaX"), 
+                                                resultSet.getFloat("coordenadaY")),
+                                        resultSet.getBoolean("disponible"));  
+                vectorVehiculos.add(vehiculo);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return vectorVehiculos;
+            
+        } catch (Exception ex) {
+            Logger.getLogger(BaseDeDatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     /*
         -------------------------------------------------------
         ------------------   ALERTAS   -------------------------
@@ -912,7 +974,173 @@ public class BaseDeDatos {
         }
         return null;
    }
+   /**
+    * @author Cristian
+    */
+    public boolean gestionarAlerta(String id){
+       
+       try {
+            abrirConexion();
+            String query = "Update Alerta set gestionada =" + 1 +
+                            " where id='" + id + "'";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
     
+    /**
+    * @author Cristian
+    */
+    public boolean desactivarAlerta(String id){
+       
+       try {
+            abrirConexion();
+            String query = "Update Alerta set activa =" + 0 +
+                            " where id='" + id + "'";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+   
+    /**
+    * @author Cristian
+    */
+    public boolean asignarVoluntarioAlerta(String idAlerta, String idVoluntario){
+       
+       try {
+            abrirConexion();
+            String query = "Insert into Participa (id_alerta, id_voluntario) values('" 
+                            + idAlerta + "','" 
+                            + idVoluntario +"')";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+    /**
+    * @author Cristian
+    */
+    public boolean desAsignarVoluntarioAlerta(String idAlerta, String idVoluntario){
+       
+       try {
+            abrirConexion();
+            String query = "Delete from Participa  where id_alerta ='"+
+                    idAlerta+"' and id_voluntario = '"+idVoluntario+"'";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+    /**
+    * @author Cristian
+    */
+    public boolean desAsignarVehiculoAlerta(String idAlerta, String idVehiculo){
+       
+       try {
+            abrirConexion();
+            String query = "Delete from Precisa  where id_alerta ='"+
+                    idAlerta+"' and id_vehiculo = '"+idVehiculo+"'";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+    
+    /**
+    * @author Cristian
+    */
+    public boolean desAsignarZonaAlerta(String idAlerta, String idZona){
+       
+       try {
+            abrirConexion();
+            String query = "Delete from Asigna  where id_alerta ='"+
+                    idAlerta+"' and id_zona = '"+idZona+"'";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+    
+    /**
+    * @author Cristian
+    */
+    public boolean asignarVehiculoAlerta(String idAlerta, String idVehiculo){
+       try {
+            abrirConexion();
+            String query = "Insert into Precisa (id_alerta, id_vehiculo) values('" 
+                            + idAlerta + "','" 
+                            + idVehiculo +"')";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
+    
+    /**
+    * @author Cristian
+    */
+    public boolean asignarZonaAlerta(String idAlerta, String idZona){
+       
+       try {
+            abrirConexion();
+            String query = "Insert into Asigna values('" 
+                            + idAlerta + "'," 
+                            + idZona +")";
+            ejecutarUpdate(query);
+            commit();
+            cerrarConexion();
+
+            return true;
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+   }
     
     /*
         -------------------------------------------------------
@@ -958,7 +1186,7 @@ public class BaseDeDatos {
         try {
             abrirConexion();
             String query="SELECT * from ZonaDeSeguridad ";
-            ArrayList<ZonaSeguridad> alertas = new ArrayList<ZonaSeguridad>();
+            ArrayList<ZonaSeguridad> zonas = new ArrayList<ZonaSeguridad>();
             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             
             while (resultSet.next()) {
@@ -971,12 +1199,46 @@ public class BaseDeDatos {
                     resultSet.getInt("coordenadaY")),
                     Integer.parseInt(id),
                     almacenes,  albergues);
-                alertas.add(zona);
+                zonas.add(zona);
             }		
             resultSet.close();
             cerrarConexion();
 
-            return alertas;
+            return zonas;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * @author Cristian
+     * Obtiene y devuelve la lista de todas las alertas almacenadas en la BD.
+     */
+    public ArrayList<ZonaSeguridad> getZonasAlerta(String id){
+        try {
+            abrirConexion();
+            String query="SELECT * from ZonaDeSeguridad, Asigna where Asigna.id_alerta='" + id +"' AND ZonaDeSeguridad.id = Asigna.id_zona";
+            ArrayList<ZonaSeguridad> zonas = new ArrayList<ZonaSeguridad>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            
+            while (resultSet.next()) {
+                String idZona = resultSet.getString("id");
+                ArrayList<Almacen> almacenes = getAlmacenesZona(idZona);
+                ArrayList<Albergue> albergues = getAlberguesZona(idZona);
+                
+                ZonaSeguridad zona = new ZonaSeguridad(new Coordenada(
+                    resultSet.getInt("coordenadaX"),
+                    resultSet.getInt("coordenadaY")),
+                    Integer.parseInt(idZona),
+                    almacenes,  albergues);
+                zonas.add(zona);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return zonas;
             
         } catch (Exception ex) {
            ex.printStackTrace();
@@ -1037,7 +1299,7 @@ public class BaseDeDatos {
                     resultSet.getString("nombre"),
                     resultSet.getInt("vehiculosNecesarios"),
                     resultSet.getInt("voluntariosNecesarios"),
-                    resultSet.getString("actuacionesNecesarios"));		
+                    resultSet.getString("actuacionesNecesarias"));		
              }
              resultSet.close();
              cerrarConexion();

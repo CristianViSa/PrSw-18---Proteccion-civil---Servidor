@@ -72,12 +72,19 @@ public class Comms extends Thread{
                 mensajeRX =(Mensaje) entrada.readObject();
                 mensajeTX = new Mensaje();
                 switch(mensajeRX.verOperacion()){
+
                     //@author Cristian
                     case ALERTAS_MAPA: 
                         ArrayList<Alerta> alertas = db.getAlertasActivas();
-                        mensajeTX.ponerParametros(String.valueOf(alertas.size()));
-                        for(int i=0; i< alertas.size(); i++) {
-                           mensajeTX.anadirParametro(alertas.get(i).toString());
+                        if(!alertas.equals(null)){
+                            mensajeTX.ponerParametros(String.valueOf(alertas.size()));
+                            for(int i=0; i< alertas.size(); i++) {
+                               mensajeTX.anadirParametro(alertas.get(i).toString());
+                            }
+                        }
+                        else{
+                        mensajeTX.ponerOperacion(Operacion.ERROR);
+                        mensajeTX.ponerParametros("No se han encontrado alertas");    
                         }
                         break;
                     //@author Cristian
@@ -85,61 +92,197 @@ public class Comms extends Thread{
                         String idAlerta = mensajeRX.verParametros();
                         Alerta alertaBuscada = db.getAlerta(idAlerta);
                         alertaBuscada.activarPlanDeProteccion();
-                        
                         Emergencia emergenciaAlerta 
                                 = alertaBuscada.getEmergencia();
                         PlanProteccion planEmergencia =
                                 emergenciaAlerta.getPlan();
+                        if(planEmergencia.equals(null)){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("Error. "
+                                    + "No se ha encontrado el plan la alerta"); 
+                            break;
+                        }
                         int vehiculosNecesarios =
                                 planEmergencia.getVehiculosNecesarios();
+
                         int voluntariosNecesarios =
                                 planEmergencia.getVoluntariosNecesarios();
                         String actuacionesNecesarios = 
                                 planEmergencia.getActuacionesNecesarias();
                         List<Voluntario> voluntariosDisponibles =
                                 db.getVoluntarios();
+                        if(voluntariosDisponibles.equals(null)){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("Error. "
+                                    + "No se han encontrado voluntarios"
+                                    + " para la alerta"); 
+                            break;
+                        }
                         List<Vehiculo> vehiculosDisponibles = 
                                 db.getVehiculos();
+                        if(vehiculosDisponibles.equals(null)){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("Error. "
+                                    + "No se han encontrado vehiculos "
+                                    + "para la alerta"); 
+                            break;
+                        }
                         List<ZonaSeguridad> zonasDeSeguridad =
                                 db.getZonasDeSeguridad();
-                        // posible excepcion
+                        if(zonasDeSeguridad.equals(null)){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("Error. "
+                                    + "No se ha encontrado la zona de "
+                                    + "seguridad para la alerta"); 
+                            break;
+                        }
                         ZonaSeguridad zonaSegura = zonasDeSeguridad.get(0);
+                        db.asignarZonaAlerta(idAlerta, String.valueOf(zonaSegura.getId()));
                         alertaBuscada.asignarZona(zonaSegura);
+                        int voluntariosAsignados = 0;
                         for(Voluntario voluntario : voluntariosDisponibles){
-                            if(voluntariosNecesarios > 0){
-                                alertaBuscada.asignarVoluntario(voluntario);
-                            }
-                        }
-                        for(Vehiculo vehiculo : vehiculosDisponibles){
-                            if(vehiculosNecesarios > 0){
-                                alertaBuscada.asignarVehiculo(vehiculo);
-                            }
-                        }
-                        List<Albergue> alberguesZona = new ArrayList<Albergue>(zonaSegura.getAlbergues()); 
-                        for(Albergue albergue : alberguesZona){
-                            if(!albergue.estaLleno()){
-                                int afectados = alertaBuscada.getAfectados();
-                                int ocupacion = albergue.getOcupacion();
-                                albergue.alojar(alertaBuscada.getAfectados());
-                                int alojados = albergue.getOcupacion() - ocupacion;
-                                if(alojados >= afectados){
-                                    break; // no aloja mas gente
+                            String idVol = voluntario.getId();
+          
+                            if(voluntariosNecesarios > voluntariosAsignados){
+                                if(voluntario.getDisponible()){
+                                    alertaBuscada.asignarVoluntario(voluntario);
+                                    voluntario.ocupar();
+                                    db.modificarVoluntario(voluntario);
+                                    db.asignarVoluntarioAlerta(idAlerta, idVol);
+                                    voluntariosAsignados++;
                                 }
                             }
                         }
+                        if(voluntariosAsignados < voluntariosNecesarios){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("No se han podido"
+                                    + " asignar todos los "
+                                    + "voluntarios necesarios. Faltan "+
+                                    (voluntariosNecesarios - voluntariosAsignados)); 
+                            break;
+                        }
+                        int vehiculosAsignados = 0;
+                        for(Vehiculo vehiculo : vehiculosDisponibles){
+                            if(vehiculosNecesarios > vehiculosAsignados){
+                                if(vehiculo.isDisponible()){
+                                    alertaBuscada.asignarVehiculo(vehiculo);
+                                    vehiculo.ocupar();
+                                    db.modificarVehiculo(vehiculo);
+                                    db.asignarVehiculoAlerta(idAlerta, vehiculo.getId());
+                                    vehiculosAsignados++;
+                                }
+                            }
+                        }
+                        if(vehiculosAsignados < vehiculosNecesarios){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("No se han podido"
+                                    + " asignar todos los "
+                                    + "vehiculos necesarios. Faltan "
+                                    + (vehiculosNecesarios - vehiculosAsignados)); 
+                            break;
+                        }
+                        List<Albergue> alberguesZona = new ArrayList<Albergue>(zonaSegura.getAlbergues()); 
+                        int afectados = alertaBuscada.getAfectados();
+                        int alojados = 0;
+                        for(Albergue albergue : alberguesZona){
+                            if(!albergue.estaLleno()){
+                                if(afectados > alojados){
+                                    int ocupacion = albergue.getOcupacion();
+                                    int capacidad = albergue.getCapacidad();
+                                    if(afectados > capacidad){
+                                        albergue.alojar(capacidad);
+                                        db.modificarAlbergue(albergue);
+                                        alojados += capacidad; 
+                                    }
+                                    else{
+                                        albergue.alojar(afectados);
+                                        db.modificarAlbergue(albergue);
+                                        alojados += afectados;
+                                    }
+                                }
+                            }
+                        }
+                        if(alojados < afectados){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("No se han podido"
+                                    + " alojar a todos los afectados."
+                                    + "Quedan por alojar "+ (afectados - alojados)); 
+                            break;
+                                    }
                         mensajeTX.ponerParametros("true");
+                    db.gestionarAlerta(idAlerta);
                         break;
+
+                    //@author Cristian
+                    case DESACTIVAR_ALERTA:
+                        String idAlertaD = mensajeRX.verParametros();
+                        Alerta alertaBuscadaD = db.getAlerta(idAlertaD);
+                        List<Voluntario> voluntariosAlerta =
+                                db.getVoluntariosAlerta(idAlertaD);
+                        List<Vehiculo> vehiculosAlerta = 
+                                db.getVehiculosAlerta(idAlertaD);
+                        List<ZonaSeguridad> zonasSeguras =
+                                db.getZonasAlerta(idAlertaD);
+
+                        for(Voluntario voluntario : voluntariosAlerta){
+                            voluntario.desocupar();
+                            voluntario.toString();
+                            db.modificarVoluntario(voluntario);
+                            db.desAsignarVoluntarioAlerta(idAlertaD, voluntario.getId());
+                        }
+                        for(Vehiculo vehiculo : vehiculosAlerta){
+                            vehiculo.desocupar();
+                            vehiculo.toString();
+                            db.modificarVehiculo(vehiculo);
+                            db.desAsignarVehiculoAlerta(idAlertaD, vehiculo.getId());
+                            //////////////////
+                        }
+                        int desalojados = 0;
+                        int afectadosAlerta = alertaBuscadaD.getAfectados();
+                        for(ZonaSeguridad zona : zonasSeguras){
+                            List<Albergue> albergues = new ArrayList<Albergue>(zona.getAlbergues()); 
+
+                            for(Albergue albergue : albergues){
+                                if(!albergue.estaLleno()){
+                                    if(afectadosAlerta > desalojados){
+                                        int ocupacion = albergue.getOcupacion();
+                                        int capacidad = albergue.getCapacidad();
+                                        if(afectadosAlerta > capacidad){
+                                            albergue.desalojar(capacidad);
+                                            db.modificarAlbergue(albergue);
+                                            desalojados += capacidad; 
+                                        }
+                                        else{
+                                            albergue.desalojar(afectadosAlerta);
+                                            db.modificarAlbergue(albergue);
+                                            desalojados += afectadosAlerta;
+                                        }
+                                    }
+                                }
+                            }
+                            db.desAsignarZonaAlerta(idAlertaD, String.valueOf(zona.getId()));
+                        }
+                        db.desactivarAlerta(idAlertaD);
+                        mensajeTX.ponerParametros("true");
+                        
+                        break;   
+                        
                     //@author Cristian
                     case HISTORIAL_ALERTAS:
                         ArrayList<Alerta> historial = db.getAlertas();
-                        mensajeTX.ponerParametros(String.valueOf(historial.size()));
-                        for(int i=0; i< historial.size(); i++) {
-                           mensajeTX.anadirParametro(historial.get(i).toString());
-                        } 
-                        //mensajeTX.ponerParametros("2,1,terremoto,1,41,-1,1000,true,10,1,2018");
-                        //mensajeTX.anadirParametro("2,alud,1,40,-1,100,true,20,5,2018");
+                         if(!historial.equals(null)){
+                            mensajeTX.ponerParametros(String.valueOf(historial.size()));
+                            for(int i=0; i< historial.size(); i++) {
+                               mensajeTX.anadirParametro(historial.get(i).toString());
+                            } 
+                        }
+                        else{
+                        mensajeTX.ponerOperacion(Operacion.ERROR);
+                        mensajeTX.ponerParametros("Error. No se ha encontrado"
+                                + " el historial de alertas");    
+                        }
                         break;
-                        
+
                     // @author Alejandro
                     case OBTENER_LISTA_VOLUNTARIOS:
                         ArrayList<Voluntario> listaVoluntarios = db.getVoluntarios();

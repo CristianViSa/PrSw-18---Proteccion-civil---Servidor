@@ -211,13 +211,12 @@ public class Alerta {
     public void asignarVehiculo(Vehiculo vehiculo){
         vehiculos.add(vehiculo);
     }
-    /**
+/**
      *
      * @author Cristian
      */
-    public boolean activarPlanDeProteccion(){
-        // TBD
-        return false;
+    public void activarPlanDeProteccion(){
+        gestionada = true;
     }
     
     @Override
@@ -225,22 +224,10 @@ public class Alerta {
      * @author Cristian
      */
     public String toString() {
-        /*
-        this.coordenadas = coordenadas;
-        this.emergencia = emergencia;
-        this.id = id;
-        this.gestionada = gestionada;
-        this.voluntarios = voluntarios;
-        this.vehiculos = vehiculos;
-        this.fecha = fecha;
-        this.activa = activa;
-        this.zona = zona;
-        this.afectados = afectados;
-        */
         return id + "," + emergencia.getTipo()+ "," +emergencia.getNivel() +
                 "," + coordenadas.getX() + "," + coordenadas.getY() + "," 
                 + afectados + "," + activa + "," + fecha.getDay() + "," 
-                + fecha.getMonth() + "," + fecha.getYear();
+                + fecha.getMonth() + "," + fecha.getYear() + "," + gestionada;
     }
     
 }
