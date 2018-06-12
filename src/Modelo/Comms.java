@@ -36,7 +36,10 @@ public class Comms extends Thread{
     private ObjectInputStream entrada;
     
     BaseDeDatos db;
-    
+    /**
+     * 
+     * @author Cristian
+     */
     public Comms() throws Exception{
         try {
             ss = new ServerSocket(puerto);
@@ -244,7 +247,7 @@ public class Comms extends Thread{
                         db.modificarAlbergue(albergue);
                     }
                     db.gestionarAlerta(idAlerta);
-                        break;
+                    break;
 
                     //@author Cristian
                     case DESACTIVAR_ALERTA:
