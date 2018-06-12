@@ -136,10 +136,24 @@ public class Comms extends Thread{
                                     + "seguridad para la alerta"); 
                             break;
                         }
-                        ZonaSeguridad zonaSegura = zonasDeSeguridad.get(0);
-                        db.asignarZonaAlerta(idAlerta, String.valueOf(zonaSegura.getId()));
-                        alertaBuscada.asignarZona(zonaSegura);
+                        ZonaSeguridad zonaSegura = null;
+                        
+                        for (ZonaSeguridad zona : zonasDeSeguridad){
+                            if(zona.getCapacidadAlbergues() > alertaBuscada.getAfectados()){
+                                zonaSegura = zona;
+                                alertaBuscada.asignarZona(zonaSegura);
+                                break;
+                            }
+                        }
+                        if(zonaSegura == null){
+                            mensajeTX.ponerOperacion(Operacion.ERROR);
+                            mensajeTX.ponerParametros("No se han encontrado"
+                                    + " zonas con suficiente capacidad para"
+                                    + " todos los afectados."); 
+                            break;
+                        };
                         int voluntariosAsignados = 0;
+                        List<Voluntario> voluntariosAsignar = new ArrayList<Voluntario>();
                         for(Voluntario voluntario : voluntariosDisponibles){
                             String idVol = voluntario.getId();
           
@@ -147,8 +161,7 @@ public class Comms extends Thread{
                                 if(voluntario.getDisponible()){
                                     alertaBuscada.asignarVoluntario(voluntario);
                                     voluntario.ocupar();
-                                    db.modificarVoluntario(voluntario);
-                                    db.asignarVoluntarioAlerta(idAlerta, idVol);
+                                    voluntariosAsignar.add(voluntario);
                                     voluntariosAsignados++;
                                 }
                             }
@@ -162,13 +175,13 @@ public class Comms extends Thread{
                             break;
                         }
                         int vehiculosAsignados = 0;
+                        List<Vehiculo> vehiculosAsignar = new ArrayList<Vehiculo>();
                         for(Vehiculo vehiculo : vehiculosDisponibles){
                             if(vehiculosNecesarios > vehiculosAsignados){
                                 if(vehiculo.isDisponible()){
                                     alertaBuscada.asignarVehiculo(vehiculo);
                                     vehiculo.ocupar();
-                                    db.modificarVehiculo(vehiculo);
-                                    db.asignarVehiculoAlerta(idAlerta, vehiculo.getId());
+                                    vehiculosAsignar.add(vehiculo);
                                     vehiculosAsignados++;
                                 }
                             }
@@ -184,6 +197,7 @@ public class Comms extends Thread{
                         List<Albergue> alberguesZona = new ArrayList<Albergue>(zonaSegura.getAlbergues()); 
                         int afectados = alertaBuscada.getAfectados();
                         int alojados = 0;
+                        List<Albergue> alberguesAsignar = new ArrayList<Albergue>();
                         for(Albergue albergue : alberguesZona){
                             if(!albergue.estaLleno()){
                                 if(afectados > alojados){
@@ -191,12 +205,12 @@ public class Comms extends Thread{
                                     int capacidad = albergue.getCapacidad();
                                     if(afectados > capacidad){
                                         albergue.alojar(capacidad);
-                                        db.modificarAlbergue(albergue);
+                                        alberguesAsignar.add(albergue);
                                         alojados += capacidad; 
                                     }
                                     else{
                                         albergue.alojar(afectados);
-                                        db.modificarAlbergue(albergue);
+                                        alberguesAsignar.add(albergue);
                                         alojados += afectados;
                                     }
                                 }
@@ -210,6 +224,25 @@ public class Comms extends Thread{
                             break;
                                     }
                         mensajeTX.ponerParametros("true");
+                    //Si todo es correcto, actualiza la BD. 
+                    //Para asegurar que si algo falla, no toca nada. Todo tiene
+                    // que ser correcto.
+                    //Voluntarios
+                    for(Voluntario voluntario : voluntariosAsignar){
+                        db.modificarVoluntario(voluntario);//
+                        db.asignarVoluntarioAlerta(idAlerta, voluntario.getId());//
+                    }
+                    //Vehiculos
+                    for(Vehiculo vehiculo : vehiculosAsignar){
+                        db.modificarVehiculo(vehiculo);
+                        db.asignarVehiculoAlerta(idAlerta, vehiculo.getId());
+                    }           
+                    //Zona
+                    db.asignarZonaAlerta(idAlerta, String.valueOf(zonaSegura.getId()));
+                    //Albergue
+                    for(Albergue albergue : alberguesAsignar){
+                        db.modificarAlbergue(albergue);
+                    }
                     db.gestionarAlerta(idAlerta);
                         break;
 
@@ -235,7 +268,7 @@ public class Comms extends Thread{
                             vehiculo.toString();
                             db.modificarVehiculo(vehiculo);
                             db.desAsignarVehiculoAlerta(idAlertaD, vehiculo.getId());
-                            //////////////////
+                            
                         }
                         int desalojados = 0;
                         int afectadosAlerta = alertaBuscadaD.getAfectados();
