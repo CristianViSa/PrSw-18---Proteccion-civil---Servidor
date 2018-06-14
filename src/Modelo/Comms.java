@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -617,6 +618,42 @@ public class Comms extends Thread{
                             db.eliminarPlan(tokens[0]);
                         //}
                         break;
+                    case ADD_ALERTA:
+                        parametros = mensajeRX.verParametros();
+                        System.out.println("comms add emergencia: " + parametros);
+                        delims = ",";
+                        tokens = parametros.split(delims);
+                        numPlanes = Integer.parseInt(tokens[0]);
+                        //System.out.println("--PLAN RECIBIDO:\n\t"+tokens[0/*+posicion*/] + "\n\t" + tokens[1/*+posicion*/]+ "\n\t" + tokens[2/*+posicion*/]+ "\n\t" + tokens[3/*+posicion*/]+ "\n\t" + tokens[4/*+posicion*/]);
+                        float coordX = Float.parseFloat(tokens[0]);
+                        float coordY = Float.parseFloat(tokens[1]);
+                        //Coordenada coordenada = new Coordenada(coordX, coordY);
+                        idEmergencia = tokens[2];
+                        emergencia = db.getEmergencia(idEmergencia);
+                        idAlerta = tokens[3];
+                        boolean gestionada;
+                        if(tokens[4]=="true")
+                            gestionada = true;
+                        else
+                            gestionada = false;
+                        Date fecha = new Date(tokens[5]);
+                        boolean activa;
+                        if(tokens[6]=="true")
+                            activa = true;
+                        else
+                            activa = false;
+                        afectados = Integer.parseInt(tokens[7]);
+                        
+                        Alerta alerta = new Alerta(new Coordenada(coordX, coordY), 
+                                emergencia, Integer.parseInt(idAlerta), gestionada, fecha, activa, afectados);
+                        break; 
+                    case LISTAR_ZONAS:
+                        ArrayList<ZonaSeguridad> listaZonas = db.getZonas();
+                        mensajeTX.ponerParametros(String.valueOf(listaZonas.size()));
+                        for(int i=0; i< listaZonas.size(); i++) {
+                            mensajeTX.anadirParametro(listaZonas.get(i).toString());
+                        } 
+                        break;
                     case LOGIN:
                         //POR HACER
                         break;
@@ -691,7 +728,6 @@ public class Comms extends Thread{
         }
         
     }
-    
     /**
      * @author Alejandro Cencerrado
      * Lee el mansaje del cliente creando un objeto que tratará de insertar en la BD.

@@ -1431,6 +1431,29 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
          return null;
     } */
     
+    public Emergencia getEmergencia(String id){
+        try {
+             abrirConexion();
+             String query="SELECT * from Emergencia where id='" + id +"'";            
+             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+             Emergencia emergencia = null;
+             if(resultSet.next()){
+                emergencia = new Emergencia(resultSet.getString("id"),
+                        (PlanProteccion)resultSet.getObject("plan"),
+                        resultSet.getString("tipo"),
+                        resultSet.getInt("nivel"));
+             }
+             resultSet.close();
+             cerrarConexion();
+
+             return emergencia;
+
+         } catch (Exception ex) {
+             ex.printStackTrace();
+         }
+         return null;
+    }
+    
     /*
      * @author Miguel
     */
@@ -1514,5 +1537,31 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
            ex.printStackTrace();
         }
     }
+    
+    public ArrayList<ZonaSeguridad> getZonas(){
+        try {
+            abrirConexion();
+            String query="SELECT * from ZonaSeguridad";
+            ArrayList<ZonaSeguridad> vectorZonas = new ArrayList<ZonaSeguridad>();
+            ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
+            while (resultSet.next()) {
+                Float coordX = resultSet.getFloat("coordenadaX");
+                Float coordY = resultSet.getFloat("coordenadaY");
+                Coordenada coord = new Coordenada(coordX, coordY);
+                ZonaSeguridad zona = new ZonaSeguridad(coord,
+                    resultSet.getInt("id"), null, null);
+                vectorZonas.add(zona);
+            }		
+            resultSet.close();
+            cerrarConexion();
+
+            return vectorZonas;
+            
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return null;
+    } 
+    
 }
 	

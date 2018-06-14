@@ -42,6 +42,17 @@ public class Alerta {
         this.afectados = afectados;
     }
     
+    public Alerta(Coordenada coordenadas, Emergencia emergencia, int id,
+            boolean gestionada, Date fecha, boolean activa, int afectados){
+        this.coordenadas = coordenadas;
+        this.emergencia = emergencia;
+        this.id = id;
+        this.gestionada = gestionada;
+        this.fecha = fecha;
+        this.activa = activa;
+        this.afectados = afectados;
+    }
+    
     /**
      * 
      * @author Cristian
