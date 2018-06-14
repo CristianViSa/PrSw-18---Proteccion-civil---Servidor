@@ -11,21 +11,20 @@ package Modelo;
  */
 
 public class Emergencia {
-    private String tipo;
-    private int id;
-    private int nivel;
+    private String id;
     private PlanProteccion plan;
+    private String tipo;
+    private int nivel;
     
     /**
      * 
      * Constructor
-     * @author Cristian
      */
-    public Emergencia(String tipo, int id, int nivel, PlanProteccion plan){
-        this.tipo = tipo;
+    public Emergencia(String id, PlanProteccion plan, String tipo, int nivel){
         this.id = id;
-        this.nivel = nivel;
         this.plan = plan;
+        this.tipo = tipo;
+        this.nivel = nivel;
     }
     
     /**
@@ -35,7 +34,7 @@ public class Emergencia {
      */
     public Emergencia(String tipo, int nivel){
         this.tipo = tipo;
-        this.id = 0;
+        this.id = "0";
         this.nivel = nivel;
     }
     
@@ -52,7 +51,7 @@ public class Emergencia {
      * Getter
      * @author Cristian
      */
-    public int getId(){
+    public String getId(){
         return id;
     }
     
@@ -80,7 +79,7 @@ public class Emergencia {
     public void setPlan(PlanProteccion plan){
         this.plan = plan;
     }
-    public String toString(){
+    /*public String toString(){
         String cadena = "Emergencia de tipo: " + tipo;
         cadena += "\n\tCódigo emergencia: " + id;
         cadena += "\n\tNivel: " + nivel;
@@ -91,6 +90,10 @@ public class Emergencia {
             cadena += "\n\tPlan Proteccion: -";
         }
         return cadena;
-    }
+    }*/
     
+    public String toString(){
+        return getId() + "," + getPlan().toString()+ "," +getTipo() +
+                "," + getNivel();
+    }
 }
