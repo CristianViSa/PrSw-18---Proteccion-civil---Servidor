@@ -9,69 +9,45 @@ import java.util.List;
 
 /**
  *
- * @author Cristian
+ * @author Miguel Yanes
  */
 public class ZonaSeguridad {
     private Coordenada coordenada;
     private int id;
     private List<Almacen> almacenes;
     private List<Albergue> albergues;
-    /**
-     *
-     * @author Cristian
-     */
+    
     public ZonaSeguridad(Coordenada coordenada, int id, List almacenes, List albergues){
         this.coordenada = coordenada;
         this.id = id;
         this.almacenes = almacenes;
         this.albergues = albergues;
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public List getAlmacenes(){
         return this.almacenes;
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public List getAlbergues(){
         return this.albergues;
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public Coordenada getCoordenada(){
         return this.coordenada;
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public int getId(){
         return this.id;
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public void setAlmacen(Almacen almacen){
         this.almacenes.add(almacen);
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public void setAlbergue(Albergue albergue){
         this.albergues.add(albergue);
     }
-    /**
-     *
-     * @author Cristian
-     */
+    
     public int getCapacidadAlbergues(){
         int capacidad = 0;
         if(!albergues.isEmpty()){

@@ -1344,6 +1344,9 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         return null;
     }  
     
+    /**
+     * @author Miguel Yanes
+     */
     public void modPlan(PlanProteccion plan){
         try{
             abrirConexion();
@@ -1354,7 +1357,6 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
             query += ", voluntariosNecesarios=" + plan.getVoluntariosNecesarios();
             query += ", actuacionesNecesarias='" + plan.getActuacionesNecesarias()+"'";
             query += " WHERE id=" + plan.getId();
-            System.out.println("CONSULTA: "+query);
             ejecutarUpdate(query);
             commit();
             cerrarConexion();
@@ -1364,6 +1366,9 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         }
     }
     
+    /**
+     * @author Miguel Yanes
+     */
     public void addPlan(PlanProteccion plan){
         try{
             abrirConexion();
@@ -1374,8 +1379,6 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
             query += "," + plan.getVoluntariosNecesarios();
             query += ",'" + plan.getActuacionesNecesarias()+"')";
             
-            System.out.println("CONSULTA: "+query);
-            //ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             ejecutarUpdate(query);
             commit();
             cerrarConexion();
@@ -1384,12 +1387,13 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         }
     }
     
+    /**
+     * @author Miguel Yanes
+     */
     public void eliminarPlan(String idPlan){
         try{
             abrirConexion();
             String query = "DELETE FROM PlanDeProteccion WHERE id="+idPlan;
-            System.out.println("CONSULTA: "+query);
-            //ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             
             ejecutarUpdate(query);
             commit();
@@ -1405,32 +1409,10 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         ------------------   EMERGENCIAS   -------------------------
         -------------------------------------------------------
     */
-       /**
-    * @author Cristian
-    */
-    /*public Emergencia buscarEmergencia(String id){
-        try {
-             abrirConexion();
-             String query="SELECT * from Emergencia where id='" + id +"'";            
-             ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
-             Emergencia emergencia = null;
-             if(resultSet.next()){
-                emergencia = new Emergencia(resultSet.getString("tipo"),
-                    resultSet.getString("id"),
-                    resultSet.getInt("nivel"),
-                    resultSet.getString("idPlan"));		
-             }
-             resultSet.close();
-             cerrarConexion();
-
-             return emergencia;
-
-         } catch (Exception ex) {
-             ex.printStackTrace();
-         }
-         return null;
-    } */
     
+    /**
+     * @author Miguel Yanes
+     */
     public Emergencia getEmergencia(String id){
         try {
              abrirConexion();
@@ -1471,7 +1453,6 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
                     plan,
                     resultSet.getString("tipo"),
                     resultSet.getInt("nivel"));	
-                System.out.println("emergencia get bd: "+emergencia.toString());
                 vectorEmergencias.add(emergencia);
             }		
             resultSet.close();
@@ -1485,6 +1466,9 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         return null;
     }  
     
+    /**
+     * @author Miguel Yanes
+     */
     public void modEmergencia(Emergencia emergencia){
         try{
             abrirConexion();
@@ -1494,7 +1478,6 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
             query += ", tipo='" + emergencia.getTipo()+"'";
             query += ", nivel=" + emergencia.getNivel();
             query += " WHERE id=" + emergencia.getId();
-            System.out.println("CONSULTA: "+query);
             ejecutarUpdate(query);
             commit();
             cerrarConexion();
@@ -1504,6 +1487,9 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         }
     }
     
+    /**
+     * @author Miguel Yanes
+     */
     public void addEmergencia(Emergencia emergencia){
         try{
             abrirConexion();
@@ -1513,8 +1499,6 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
             query += ",'" + emergencia.getTipo() + "'";
             query += "," + emergencia.getNivel() +")";
             
-            System.out.println("CONSULTA: "+query);
-            //ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             ejecutarUpdate(query);
             commit();
             cerrarConexion();
@@ -1523,12 +1507,13 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         }
     }
     
+    /**
+     * @author Miguel Yanes
+     */
     public void eliminarEmergencia(String idEmergencia){
         try{
             abrirConexion();
             String query = "DELETE FROM Emergencia WHERE id="+idEmergencia;
-            System.out.println("CONSULTA: "+query);
-            //ResultSet resultSet = (ResultSet) ejecutarConsulta(query);
             
             ejecutarUpdate(query);
             commit();
@@ -1538,6 +1523,9 @@ public ArrayList<Voluntario> getVoluntariosAlerta(String id){
         }
     }
     
+    /**
+     * @author Miguel Yanes
+     */
     public ArrayList<ZonaSeguridad> getZonas(){
         try {
             abrirConexion();

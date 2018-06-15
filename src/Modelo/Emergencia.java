@@ -7,7 +7,7 @@ package Modelo;
 
 /**
  *
- * @author Cristian
+ * @author Miguel Yanes
  */
 
 public class Emergencia {
@@ -27,55 +27,28 @@ public class Emergencia {
         this.nivel = nivel;
     }
     
-    /**
-     * 
-     * Constructor
-     * @author Cristian
-     */
     public Emergencia(String tipo, int nivel){
         this.tipo = tipo;
         this.id = "0";
         this.nivel = nivel;
     }
     
-    /**
-     * 
-     * Getter
-     * @author Cristian
-     */
     public String getTipo(){
         return tipo;
     }
     
-    /**
-     * Getter
-     * @author Cristian
-     */
     public String getId(){
         return id;
     }
     
-    /**
-     * Getter
-     * @author Cristian
-     */
     public int getNivel(){
         return nivel;
     }
     
-    /**
-     * Getter
-     * @author Cristian
-     */
     public PlanProteccion getPlan(){
         return plan;
     }
     
-    /**
-     * 
-     * Setter 
-     * @author Cristian
-     */
     public void setPlan(PlanProteccion plan){
         this.plan = plan;
     }
